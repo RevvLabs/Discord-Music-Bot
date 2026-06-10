@@ -1,0 +1,11 @@
+discord.py
+python-dotenv
+asyncpg
+psutil
+jishaku
+voltricx
+PyNaCl
+davey
+unidecode
+Pillow
+aiohttp

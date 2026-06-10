@@ -1,0 +1,173 @@
+## Lavalink server config TEMPLATE
+## Copy to application.yml and fill in the credentials marked YOUR_*.
+## application.yml is gitignored — never commit the filled-in version.
+
+lavalink:
+    plugins:
+        - dependency: com.github.topi314.lavasearch:lavasearch-plugin:1.0.0
+          snapshot: false
+        - dependency: com.github.topi314.lavasrc:lavasrc-plugin:4.8.3
+          snapshot: false
+        - dependency: com.github.topi314.sponsorblock:sponsorblock-plugin:3.0.1
+          snapshot: false
+        - dependency: dev.lavalink.youtube:youtube-plugin:1.18.1
+          snapshot: false
+        - dependency: com.github.topi314.lavalyrics:lavalyrics-plugin:1.0.0
+          snapshot: false
+
+    pluginsDir: ./plugins
+    server:
+        bufferDurationMs: 400
+        filters:
+            channelMix: true
+            distortion: true
+            equalizer: true
+            karaoke: true
+            lowPass: true
+            rotation: true
+            timescale: true
+            tremolo: true
+            vibrato: true
+            volume: true
+        frameBufferDurationMs: 5000
+        gc-warnings: true
+        opusEncodingQuality: 10
+        # Must match NODE_1_PASSWORD in your bot's .env
+        password: YOUR_LAVALINK_PASSWORD
+        playerUpdateInterval: 5
+        resamplingQuality: HIGH
+        soundcloudSearchEnabled: true
+        sources:
+            bandcamp: true
+            http: true
+            local: false
+            mixer: true
+            nico: true
+            soundcloud: true
+            twitch: true
+            vimeo: true
+            youtube: false
+        trackStuckThresholdMs: 10000
+        useSeekGhosting: true
+        # Optional: a throwaway Google account for YouTube playback (avoid your personal one)
+        youtubeConfig:
+            email: YOUR_THROWAWAY_GOOGLE_EMAIL
+            password: YOUR_THROWAWAY_GOOGLE_PASSWORD
+        youtubePlaylistLoadLimit: 6
+        youtubeSearchEnabled: true
+logging:
+    file:
+        path: ./logs/
+    level:
+        lavalink: INFO
+        root: INFO
+    logback:
+        rollingpolicy:
+            max-file-size: 3GB
+            max-history: 30
+    request:
+        enabled: true
+        includeClientInfo: true
+        includeHeaders: false
+        includePayload: true
+        includeQueryString: true
+        maxPayloadLength: 10000
+metrics:
+    prometheus:
+        enabled: false
+        endpoint: /metrics
+plugins:
+    lavasrc:
+        applemusic:
+            albumLoadLimit: 6
+            countryCode: IN
+            # Get from an Apple Music web session (see lavasrc docs)
+            mediaAPIToken: YOUR_APPLE_MUSIC_MEDIA_API_TOKEN
+            playlistLoadLimit: 6
+        deezer:
+            # Your Deezer browser session's "arl" cookie (see lavasrc docs)
+            arl: YOUR_DEEZER_ARL_COOKIE
+            formats:
+                - FLAC
+                - MP3_320
+                - MP3_256
+                - MP3_128
+                - MP3_64
+                - AAC_64
+            # Public well-known constant — leave as is
+            masterDecryptionKey: g4el58wc0zvf9na1
+        jiosaavn:
+            decryption:
+                # Public well-known constant — leave as is
+                secretKey: "38346591"
+        lyrics-sources:
+            deezer: true
+            lrcLib: true
+            spotify: false
+            vkmusic: false
+            yandexmusic: false
+            youtube: true
+        providers:
+            - ytmsearch:%QUERY%
+            - dzsearch:%QUERY%
+            - jssearch:%QUERY%
+            - scsearch:%QUERY%
+            - ytsearch:%QUERY%
+            - spsearch:%QUERY%
+            - sprec:%QUERY%
+            - ymsearch:%QUERY%
+            - amsearch:%QUERY%
+        sources:
+            applemusic: true
+            deezer: true
+            jiosaavn: true
+            spotify: true
+            youtube: false
+        spotify:
+            albumLoadLimit: 6
+            # Create an app at https://developer.spotify.com/dashboard
+            clientId: YOUR_SPOTIFY_CLIENT_ID
+            clientSecret: YOUR_SPOTIFY_CLIENT_SECRET
+            countryCode: IN
+            localFiles: false
+            playlistLoadLimit: 10
+            resolveArtistsInSearch: false
+    lavalyrics:
+        sources:
+            - youtube
+            - deezer
+
+    youtube:
+        allowDirectPlaylistIds: true
+        allowDirectVideoIds: true
+        allowSearch: true
+        clients:
+            - MUSIC
+            - ANDROID_VR
+            - WEB
+            - WEBEMBEDDED
+            - MWEB
+            - ANDROID_MUSIC
+            - IOS
+            - TV
+            - TVHTML5_SIMPLY
+        enabled: true
+        oauth:
+            enabled: true
+            # Generated on first run — see youtube-plugin OAuth docs
+            refreshToken: YOUR_YOUTUBE_OAUTH_REFRESH_TOKEN
+        pot:
+            token: paste your po_token here
+            visitorData: paste your visitor_data here
+        remoteCipher:
+            url: https://cipher.kikkia.dev/
+            userAgent: your_service_name
+sentry:
+    dsn: ""
+    environment: ""
+server:
+    address: 0.0.0.0
+    http2:
+        enabled: false
+    # Must match the port in NODE_1_URI in your bot's .env
+    port: 1112
