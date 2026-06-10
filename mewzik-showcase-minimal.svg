@@ -1,0 +1,559 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="891mm" viewBox="0 0 794 3369" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+
+  <!-- ============================================================ -->
+  <!--  MEWZIK — minimal / futurist product sheet                    -->
+  <!--  A4 width x 3xA4 height · cool x warm duotone                 -->
+  <!-- ============================================================ -->
+
+  <defs>
+    <linearGradient id="cool" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5EE7DF"/>
+      <stop offset="1" stop-color="#6C5CE7"/>
+    </linearGradient>
+    <linearGradient id="warm" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFB86B"/>
+      <stop offset="1" stop-color="#FF6BCB"/>
+    </linearGradient>
+    <linearGradient id="blend" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"   stop-color="#5EE7DF"/>
+      <stop offset=".38" stop-color="#6C5CE7"/>
+      <stop offset=".68" stop-color="#FF6BCB"/>
+      <stop offset="1"   stop-color="#FFB86B"/>
+    </linearGradient>
+    <linearGradient id="orb" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"   stop-color="#5EE7DF"/>
+      <stop offset=".5"  stop-color="#6C5CE7"/>
+      <stop offset="1"   stop-color="#FF8A65"/>
+    </linearGradient>
+    <radialGradient id="hazeCool"><stop offset="0" stop-color="#5EE7DF" stop-opacity=".16"/><stop offset="1" stop-color="#5EE7DF" stop-opacity="0"/></radialGradient>
+    <radialGradient id="hazeWarm"><stop offset="0" stop-color="#FF8A65" stop-opacity=".16"/><stop offset="1" stop-color="#FF8A65" stop-opacity="0"/></radialGradient>
+
+    <path id="spark" d="M0 -7 L1.8 -1.8 L7 0 L1.8 1.8 L0 7 L-1.8 1.8 L-7 0 L-1.8 -1.8 Z"/>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#FFFFFF" opacity=".045"/>
+    </pattern>
+    <path id="tickX" d="M-4 -4 L4 4 M4 -4 L-4 4"/>
+    <path id="tickOK" d="M-5 0 L-1.5 3.5 L5 -4"/>
+  </defs>
+
+  <!-- ====================== BACKGROUND ========================= -->
+  <rect width="794" height="3369" fill="#0B0B10"/>
+  <ellipse cx="120" cy="190"  rx="260" ry="200" fill="url(#hazeCool)"/>
+  <ellipse cx="674" cy="190"  rx="260" ry="200" fill="url(#hazeWarm)"/>
+  <ellipse cx="120" cy="1500" rx="240" ry="180" fill="url(#hazeCool)" opacity=".7"/>
+  <ellipse cx="674" cy="1500" rx="240" ry="180" fill="url(#hazeWarm)" opacity=".7"/>
+  <ellipse cx="120" cy="2700" rx="240" ry="180" fill="url(#hazeCool)"/>
+  <ellipse cx="674" cy="2700" rx="240" ry="180" fill="url(#hazeWarm)"/>
+  <rect x="40" y="50" width="714" height="3250" fill="url(#dots)"/>
+
+  <!-- ======================= FRAME ============================= -->
+  <text x="40"  y="38" font-family="Consolas, monospace" font-size="9" letter-spacing="2" fill="#8A8AA0">MEWZIK &#169; 2026</text>
+  <text x="754" y="38" text-anchor="end" font-family="Consolas, monospace" font-size="9" letter-spacing="2" fill="#8A8AA0">DISCORD MUSIC BOT</text>
+  <line x1="40" y1="50" x2="754" y2="50" stroke="#FFFFFF" stroke-opacity=".12"/>
+  <line x1="40"  y1="50" x2="40"  y2="3300" stroke="#FFFFFF" stroke-opacity=".05"/>
+  <line x1="754" y1="50" x2="754" y2="3300" stroke="#FFFFFF" stroke-opacity=".05"/>
+  <g stroke="#FFFFFF" stroke-opacity=".25">
+    <line x1="40" y1="640"  x2="48" y2="640"/><line x1="746" y1="640"  x2="754" y2="640"/>
+    <line x1="40" y1="1204" x2="48" y2="1204"/><line x1="746" y1="1204" x2="754" y2="1204"/>
+    <line x1="40" y1="1786" x2="48" y2="1786"/><line x1="746" y1="1786" x2="754" y2="1786"/>
+    <line x1="40" y1="2300" x2="48" y2="2300"/><line x1="746" y1="2300" x2="754" y2="2300"/>
+    <line x1="40" y1="3030" x2="48" y2="3030"/><line x1="746" y1="3030" x2="754" y2="3030"/>
+  </g>
+  <text transform="rotate(-90 28 1700)" x="28" y="1700" text-anchor="middle" font-family="Consolas, monospace" font-size="9" letter-spacing="4" fill="#FFFFFF" fill-opacity=".18">MEWZIK&#183;AUDIO&#183;SYSTEM</text>
+  <text transform="rotate(90 766 1700)" x="766" y="1700" text-anchor="middle" font-family="Consolas, monospace" font-size="9" letter-spacing="4" fill="#FFFFFF" fill-opacity=".18">EST&#183;2026&#183;FOR&#183;DISCORD</text>
+
+  <!-- ======================== HERO ============================= -->
+  <g font-family="Consolas, monospace" font-size="8.5" letter-spacing="2" fill="#5A5A6E">
+    <text x="52"  y="118">SRC x5</text>
+    <text x="52"  y="134">FX x7</text>
+    <text x="742" y="118" text-anchor="end">MODE 24/7</text>
+    <text x="742" y="134" text-anchor="end">STATUS ONLINE</text>
+  </g>
+  <g transform="translate(397,240)">
+    <circle r="150" fill="none" stroke="#FFFFFF" stroke-opacity=".05"/>
+    <circle r="110" fill="none" stroke="#FFFFFF" stroke-opacity=".05"/>
+    <ellipse rx="135" ry="34" fill="none" stroke="url(#blend)" stroke-opacity=".3" stroke-width="1.2"/>
+    <ellipse rx="105" ry="26" fill="none" stroke="url(#blend)" stroke-opacity=".8" stroke-width="1.5"/>
+    <circle r="64" fill="url(#orb)"/>
+    <ellipse cx="-14" cy="-30" rx="26" ry="14" fill="#FFFFFF" opacity=".18"/>
+    <circle r="64" fill="none" stroke="#FFFFFF" stroke-opacity=".15"/>
+    <circle cx="-135" cy="0" r="4" fill="#5EE7DF"/>
+    <circle cx="135"  cy="0" r="4" fill="#FFB86B"/>
+  </g>
+  <g stroke="#FFFFFF" stroke-opacity=".25" stroke-width="1">
+    <path d="M222 240h10M227 235v10"/>
+    <path d="M562 240h10M567 235v10"/>
+  </g>
+  <use href="#spark" transform="translate(180,140)" fill="#5EE7DF"/>
+  <use href="#spark" transform="translate(614,140)" fill="#FFB86B"/>
+  <use href="#spark" transform="translate(120,330) scale(.7)" fill="#6C5CE7"/>
+  <use href="#spark" transform="translate(674,330) scale(.7)" fill="#FF6BCB"/>
+  <!-- genre stickers -->
+  <g font-family="Consolas, monospace" font-size="9.5" text-anchor="middle">
+    <g transform="translate(132,206) rotate(-10)">
+      <rect x="-23" y="-10" width="46" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#5EE7DF" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">lofi</text>
+    </g>
+    <g transform="translate(662,206) rotate(10)">
+      <rect x="-26" y="-10" width="52" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#FFB86B" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">phonk</text>
+    </g>
+    <g transform="translate(158,308) rotate(-6)">
+      <rect x="-22" y="-10" width="44" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#FFB86B" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">r&amp;b</text>
+    </g>
+    <g transform="translate(636,308) rotate(6)">
+      <rect x="-22" y="-10" width="44" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#5EE7DF" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">edm</text>
+    </g>
+    <g transform="translate(95,415) rotate(-8)">
+      <rect x="-35" y="-10" width="70" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#FFB86B" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">hyperpop</text>
+    </g>
+    <g transform="translate(699,415) rotate(8)">
+      <rect x="-26" y="-10" width="52" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#5EE7DF" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">indie</text>
+    </g>
+  </g>
+
+  <text x="397" y="432" text-anchor="middle" font-size="92" font-weight="800" letter-spacing="3" fill="url(#blend)">mewzik</text>
+  <text x="397" y="472" text-anchor="middle" font-size="18" fill="#EDEDF2">your server&#8217;s new sound system.</text>
+  <text x="397" y="500" text-anchor="middle" font-family="Consolas, monospace" font-size="10" letter-spacing="3" fill="#8A8AA0">MULTI-PLATFORM &#183; INTERACTIVE PLAYER &#183; ALWAYS ON</text>
+
+  <!-- ====================== MARQUEE A ========================== -->
+  <line x1="40" y1="540" x2="754" y2="540" stroke="#FFFFFF" stroke-opacity=".1"/>
+  <line x1="40" y1="584" x2="754" y2="584" stroke="#FFFFFF" stroke-opacity=".1"/>
+  <g font-family="Consolas, monospace" font-size="12" letter-spacing="2" fill="#C9C9D6">
+    <text x="52"  y="568">PLAY</text>
+    <text x="154" y="568">VIBE</text>
+    <text x="256" y="568">LOOP</text>
+    <text x="358" y="568">SKIP</text>
+    <text x="460" y="568">BASS</text>
+    <text x="562" y="568">GLOW</text>
+    <text x="664" y="568">QUEUE</text>
+  </g>
+  <g>
+    <rect x="117" y="559" width="6" height="6" transform="rotate(45 120 562)" fill="#5EE7DF"/>
+    <rect x="219" y="559" width="6" height="6" transform="rotate(45 222 562)" fill="#FFB86B"/>
+    <rect x="321" y="559" width="6" height="6" transform="rotate(45 324 562)" fill="#5EE7DF"/>
+    <rect x="423" y="559" width="6" height="6" transform="rotate(45 426 562)" fill="#FFB86B"/>
+    <rect x="525" y="559" width="6" height="6" transform="rotate(45 528 562)" fill="#5EE7DF"/>
+    <rect x="627" y="559" width="6" height="6" transform="rotate(45 630 562)" fill="#FFB86B"/>
+    <rect x="729" y="559" width="6" height="6" transform="rotate(45 732 562)" fill="#5EE7DF"/>
+  </g>
+
+  <!-- ===================== [01] SOUND ========================== -->
+  <text x="397" y="660" text-anchor="middle" font-family="Consolas, monospace" font-size="11" letter-spacing="3" fill="#5EE7DF">[ 01 ]</text>
+  <text x="397" y="698" text-anchor="middle" font-size="30" font-weight="700" fill="#F5F4F8">sound, your way</text>
+
+  <line x1="278" y1="745" x2="278" y2="895" stroke="#FFFFFF" stroke-opacity=".08"/>
+  <line x1="516" y1="745" x2="516" y2="895" stroke="#FFFFFF" stroke-opacity=".08"/>
+  <g text-anchor="middle">
+    <text x="159" y="798" font-size="44" font-weight="800" fill="url(#cool)">5</text>
+    <text x="159" y="824" font-size="14" font-weight="600" fill="#EDEDF2">streaming platforms</text>
+    <text x="159" y="846" font-family="Consolas, monospace" font-size="9.5" fill="#8A8AA0">spotify &#183; youtube &#183; apple music</text>
+    <text x="159" y="861" font-family="Consolas, monospace" font-size="9.5" fill="#8A8AA0">deezer &#183; soundcloud</text>
+
+    <text x="397" y="798" font-size="44" font-weight="800" fill="url(#blend)">7</text>
+    <text x="397" y="824" font-size="14" font-weight="600" fill="#EDEDF2">studio filters</text>
+    <text x="397" y="846" font-family="Consolas, monospace" font-size="9.5" fill="#8A8AA0">bassboost &#183; nightcore &#183; vaporwave</text>
+    <text x="397" y="861" font-family="Consolas, monospace" font-size="9.5" fill="#8A8AA0">karaoke &#183; 8d &#183; chipmunk &#183; deepvoice</text>
+
+    <text x="635" y="798" font-size="44" font-weight="800" fill="url(#warm)">24/7</text>
+    <text x="635" y="824" font-size="14" font-weight="600" fill="#EDEDF2">always-on mode</text>
+    <text x="635" y="846" font-family="Consolas, monospace" font-size="9.5" fill="#8A8AA0">dedicated channel, custom prefix,</text>
+    <text x="635" y="861" font-family="Consolas, monospace" font-size="9.5" fill="#8A8AA0">never goes offline</text>
+  </g>
+  <!-- column accents -->
+  <g>
+    <circle cx="127" cy="882" r="3.5" fill="#1DB954"/>
+    <circle cx="143" cy="882" r="3.5" fill="#FF3333"/>
+    <circle cx="159" cy="882" r="3.5" fill="#FA57C1"/>
+    <circle cx="175" cy="882" r="3.5" fill="#A238FF"/>
+    <circle cx="191" cy="882" r="3.5" fill="#FF5500"/>
+  </g>
+  <g fill="url(#blend)" opacity=".7">
+    <rect x="365" y="880" width="4" height="8"  rx="2"/>
+    <rect x="375" y="874" width="4" height="14" rx="2"/>
+    <rect x="385" y="868" width="4" height="20" rx="2"/>
+    <rect x="395" y="864" width="4" height="24" rx="2"/>
+    <rect x="405" y="868" width="4" height="20" rx="2"/>
+    <rect x="415" y="874" width="4" height="14" rx="2"/>
+    <rect x="425" y="880" width="4" height="8"  rx="2"/>
+  </g>
+  <g>
+    <circle cx="635" cy="878" r="9" fill="none" stroke="#FFB86B" stroke-width="1.5"/>
+    <path d="M635 872v6l4 3" fill="none" stroke="#FFB86B" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- mini player -->
+  <g>
+    <rect x="97" y="920" width="600" height="92" rx="24" fill="#FFFFFF" fill-opacity=".04" stroke="#FFFFFF" stroke-opacity=".1"/>
+    <circle cx="135" cy="966" r="22" fill="url(#blend)"/>
+    <circle cx="135" cy="966" r="13" fill="none" stroke="#FFFFFF" stroke-opacity=".25"/>
+    <circle cx="135" cy="966" r="4" fill="#0B0B10"/>
+    <text x="175" y="958" font-size="13" font-weight="600" fill="#F5F4F8">midnight frequencies &#8212; aurora lane</text>
+    <text x="175" y="976" font-family="Consolas, monospace" font-size="9.5" fill="#8A8AA0">02:21 / 03:56 &#183; spotify &#183; filter: 8d</text>
+    <g fill="url(#blend)" opacity=".6">
+      <rect x="470" y="962" width="3" height="8"  rx="1.5"/>
+      <rect x="477" y="959" width="3" height="14" rx="1.5"/>
+      <rect x="484" y="956" width="3" height="20" rx="1.5"/>
+      <rect x="491" y="960" width="3" height="12" rx="1.5"/>
+      <rect x="498" y="957" width="3" height="18" rx="1.5"/>
+      <rect x="505" y="961" width="3" height="10" rx="1.5"/>
+      <rect x="512" y="955" width="3" height="22" rx="1.5"/>
+      <rect x="519" y="958" width="3" height="16" rx="1.5"/>
+      <rect x="526" y="962" width="3" height="9"  rx="1.5"/>
+      <rect x="533" y="959" width="3" height="15" rx="1.5"/>
+      <rect x="540" y="956" width="3" height="21" rx="1.5"/>
+      <rect x="547" y="961" width="3" height="11" rx="1.5"/>
+      <rect x="554" y="958" width="3" height="17" rx="1.5"/>
+      <rect x="561" y="960" width="3" height="13" rx="1.5"/>
+    </g>
+    <line x1="175" y1="992" x2="560" y2="992" stroke="#2A2A36" stroke-width="3" stroke-linecap="round"/>
+    <line x1="175" y1="992" x2="406" y2="992" stroke="url(#blend)" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="406" cy="992" r="4" fill="#FFFFFF"/>
+    <circle cx="598" cy="966" r="12" fill="none" stroke="#FFFFFF" stroke-opacity=".2"/>
+    <path d="M602.5 960.5v11l-8-5.5zM594 961v10" stroke="#C9C9D6" stroke-width="1.4" fill="#C9C9D6" stroke-linecap="round"/>
+    <circle cx="632" cy="966" r="16" fill="url(#blend)"/>
+    <path d="M628 959.5v13l10-6.5z" fill="#0B0B10"/>
+    <circle cx="666" cy="966" r="12" fill="none" stroke="#FFFFFF" stroke-opacity=".2"/>
+    <path d="M661.5 960.5v11l8-5.5zM670 961v10" stroke="#C9C9D6" stroke-width="1.4" fill="#C9C9D6" stroke-linecap="round"/>
+  </g>
+  <text x="397" y="1042" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#8A8AA0">live buttons on every track &#8212; skip &#183; loop &#183; fav &#183; volume</text>
+
+  <!-- ====================== MARQUEE B ========================== -->
+  <line x1="40" y1="1100" x2="754" y2="1100" stroke="#FFFFFF" stroke-opacity=".1"/>
+  <line x1="40" y1="1144" x2="754" y2="1144" stroke="#FFFFFF" stroke-opacity=".1"/>
+  <g font-family="Consolas, monospace" font-size="12" letter-spacing="2" fill="#C9C9D6">
+    <text x="52"  y="1128">DROP</text>
+    <text x="154" y="1128">MIX</text>
+    <text x="256" y="1128">SYNC</text>
+    <text x="358" y="1128">WAVE</text>
+    <text x="460" y="1128">TONE</text>
+    <text x="562" y="1128">BEAT</text>
+    <text x="664" y="1128">ECHO</text>
+  </g>
+  <g>
+    <rect x="117" y="1119" width="6" height="6" transform="rotate(45 120 1122)" fill="#FFB86B"/>
+    <rect x="219" y="1119" width="6" height="6" transform="rotate(45 222 1122)" fill="#5EE7DF"/>
+    <rect x="321" y="1119" width="6" height="6" transform="rotate(45 324 1122)" fill="#FFB86B"/>
+    <rect x="423" y="1119" width="6" height="6" transform="rotate(45 426 1122)" fill="#5EE7DF"/>
+    <rect x="525" y="1119" width="6" height="6" transform="rotate(45 528 1122)" fill="#FFB86B"/>
+    <rect x="627" y="1119" width="6" height="6" transform="rotate(45 630 1122)" fill="#5EE7DF"/>
+    <rect x="729" y="1119" width="6" height="6" transform="rotate(45 732 1122)" fill="#FFB86B"/>
+  </g>
+
+  <!-- =================== [02] FEATURES ========================= -->
+  <text x="397" y="1208" text-anchor="middle" font-family="Consolas, monospace" font-size="11" letter-spacing="3" fill="#FFB86B">[ 02 ]</text>
+  <text x="397" y="1246" text-anchor="middle" font-size="30" font-weight="700" fill="#F5F4F8">everything it does</text>
+  <g font-family="Consolas, monospace" font-size="9.5" text-anchor="middle">
+    <g transform="translate(110,1226) rotate(-7)">
+      <rect x="-23" y="-10" width="46" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#5EE7DF" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">trap</text>
+    </g>
+    <g transform="translate(684,1226) rotate(7)">
+      <rect x="-23" y="-10" width="46" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#FFB86B" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">jazz</text>
+    </g>
+  </g>
+
+  <!-- row 1 -->
+  <g transform="translate(40,1280)">
+    <rect width="347" height="96" rx="18" fill="#FFFFFF" fill-opacity=".03" stroke="#FFFFFF" stroke-opacity=".1"/>
+    <circle cx="28" cy="38" r="4" fill="#5EE7DF"/>
+    <text x="331" y="26" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#5A5A6E">01</text>
+    <text x="44" y="43" font-size="15" font-weight="700" fill="#F5F4F8">smart autoplay</text>
+    <text x="44" y="66" font-size="11" fill="#8A8AA0">queue refills itself, stops when the room empties</text>
+    <text x="331" y="84" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#5EE7DF" fill-opacity=".85">/autoplay</text>
+  </g>
+  <g transform="translate(407,1280)">
+    <rect width="347" height="96" rx="18" fill="#FFFFFF" fill-opacity=".03" stroke="#FFFFFF" stroke-opacity=".1"/>
+    <circle cx="28" cy="38" r="4" fill="#FFB86B"/>
+    <text x="331" y="26" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#5A5A6E">02</text>
+    <text x="44" y="43" font-size="15" font-weight="700" fill="#F5F4F8">live lyrics</text>
+    <text x="44" y="66" font-size="11" fill="#8A8AA0">on-demand, fuzzy-matched, romanized</text>
+    <text x="331" y="84" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#FFB86B" fill-opacity=".85">/lyrics</text>
+  </g>
+  <!-- row 2 -->
+  <g transform="translate(40,1394)">
+    <rect width="347" height="96" rx="18" fill="#FFFFFF" fill-opacity=".03" stroke="#FFFFFF" stroke-opacity=".1"/>
+    <circle cx="28" cy="38" r="4" fill="#FFB86B"/>
+    <text x="331" y="26" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#5A5A6E">03</text>
+    <text x="44" y="43" font-size="15" font-weight="700" fill="#F5F4F8">pick-your-version search</text>
+    <text x="44" y="66" font-size="11" fill="#8A8AA0">choose the exact upload from a clean menu</text>
+    <text x="331" y="84" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#FFB86B" fill-opacity=".85">/search</text>
+  </g>
+  <g transform="translate(407,1394)">
+    <rect width="347" height="96" rx="18" fill="#FFFFFF" fill-opacity=".03" stroke="#FFFFFF" stroke-opacity=".1"/>
+    <circle cx="28" cy="38" r="4" fill="#5EE7DF"/>
+    <text x="331" y="26" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#5A5A6E">04</text>
+    <text x="44" y="43" font-size="15" font-weight="700" fill="#F5F4F8">playlists + favorites</text>
+    <text x="44" y="66" font-size="11" fill="#8A8AA0">your library follows you across servers</text>
+    <text x="331" y="84" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#5EE7DF" fill-opacity=".85">/playlist &#183; /favorite</text>
+  </g>
+  <!-- row 3 -->
+  <g transform="translate(40,1508)">
+    <rect width="347" height="96" rx="18" fill="#FFFFFF" fill-opacity=".03" stroke="#FFFFFF" stroke-opacity=".1"/>
+    <circle cx="28" cy="38" r="4" fill="#5EE7DF"/>
+    <text x="331" y="26" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#5A5A6E">05</text>
+    <text x="44" y="43" font-size="15" font-weight="700" fill="#F5F4F8">profile cards + leaderboard</text>
+    <text x="44" y="66" font-size="11" fill="#8A8AA0">rendered cards, real listening-time ranks</text>
+    <text x="331" y="84" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#5EE7DF" fill-opacity=".85">/profile &#183; /leaderboard</text>
+  </g>
+  <g transform="translate(407,1508)">
+    <rect width="347" height="96" rx="18" fill="#FFFFFF" fill-opacity=".03" stroke="#FFFFFF" stroke-opacity=".1"/>
+    <circle cx="28" cy="38" r="4" fill="#FFB86B"/>
+    <text x="331" y="26" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#5A5A6E">06</text>
+    <text x="44" y="43" font-size="15" font-weight="700" fill="#F5F4F8">dj mode + session lock</text>
+    <text x="44" y="66" font-size="11" fill="#8A8AA0">hand over the decks without losing control</text>
+    <text x="331" y="84" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#FFB86B" fill-opacity=".85">/dj &#183; /session</text>
+  </g>
+  <!-- row 4 -->
+  <g transform="translate(40,1622)">
+    <rect width="347" height="96" rx="18" fill="#FFFFFF" fill-opacity=".03" stroke="#FFFFFF" stroke-opacity=".1"/>
+    <circle cx="28" cy="38" r="4" fill="#FFB86B"/>
+    <text x="331" y="26" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#5A5A6E">07</text>
+    <text x="44" y="43" font-size="15" font-weight="700" fill="#F5F4F8">setup + temp voice mode</text>
+    <text x="44" y="66" font-size="11" fill="#8A8AA0">bind to one channel or a whole category</text>
+    <text x="331" y="84" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#FFB86B" fill-opacity=".85">/setup &#183; /temp-setup</text>
+  </g>
+  <g transform="translate(407,1622)">
+    <rect width="347" height="96" rx="18" fill="#FFFFFF" fill-opacity=".03" stroke="#FFFFFF" stroke-opacity=".1"/>
+    <circle cx="28" cy="38" r="4" fill="#5EE7DF"/>
+    <text x="331" y="26" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#5A5A6E">08</text>
+    <text x="44" y="43" font-size="15" font-weight="700" fill="#F5F4F8">self-healing voice</text>
+    <text x="44" y="66" font-size="11" fill="#8A8AA0">auto-joins and repairs broken connections</text>
+    <text x="331" y="84" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#5EE7DF" fill-opacity=".85">/join &#183; /fix</text>
+  </g>
+
+  <!-- ================= [03] BUILT DIFFERENT ==================== -->
+  <text x="397" y="1790" text-anchor="middle" font-family="Consolas, monospace" font-size="11" letter-spacing="3" fill="#5EE7DF">[ 03 ]</text>
+  <text x="397" y="1828" text-anchor="middle" font-size="30" font-weight="700" fill="#F5F4F8">built different</text>
+  <text x="397" y="1854" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" fill="#8A8AA0">the stuff other music bots simply don&#8217;t have</text>
+  <g font-family="Consolas, monospace" font-size="9.5" text-anchor="middle">
+    <g transform="translate(110,1808) rotate(-9)">
+      <rect x="-26" y="-10" width="52" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#FFB86B" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">drill</text>
+    </g>
+    <g transform="translate(684,1808) rotate(9)">
+      <rect x="-26" y="-10" width="52" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#5EE7DF" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">house</text>
+    </g>
+  </g>
+
+  <g>
+    <line x1="40"  y1="1880" x2="754" y2="1880" stroke="#FFFFFF" stroke-opacity=".12"/>
+    <line x1="40"  y1="1906" x2="754" y2="1906" stroke="#FFFFFF" stroke-opacity=".08"/>
+    <line x1="535" y1="1880" x2="535" y2="2230" stroke="#FFFFFF" stroke-opacity=".06"/>
+    <line x1="640" y1="1880" x2="640" y2="2230" stroke="#FFFFFF" stroke-opacity=".06"/>
+    <line x1="40"  y1="2230" x2="754" y2="2230" stroke="#FFFFFF" stroke-opacity=".12"/>
+
+    <text x="64"  y="1898" font-family="Consolas, monospace" font-size="9" letter-spacing="2" fill="#5A5A6E">FEATURE</text>
+    <text x="587" y="1898" text-anchor="middle" font-family="Consolas, monospace" font-size="9" letter-spacing="2" fill="#5A5A6E">OTHERS</text>
+    <text x="697" y="1898" text-anchor="middle" font-family="Consolas, monospace" font-size="9" letter-spacing="2" fill="url(#blend)" font-weight="700">MEWZIK</text>
+
+    <g font-size="12.5" fill="#EDEDF2">
+      <text x="64" y="1934">lyrics that romanize non-latin songs</text>
+      <text x="64" y="1970">a voice connection that repairs itself</text>
+      <text x="64" y="2006">per-user audio engine choice</text>
+      <text x="64" y="2042">rendered profile cards + listening-time ranks</text>
+      <text x="64" y="2078">per-command dj locks, not one blunt role</text>
+      <text x="64" y="2114">autoplay that knows when the room is empty</text>
+      <text x="64" y="2150">two setup modes &#8212; channel or whole category</text>
+      <text x="64" y="2186">automatic sharding + clustering, scales itself</text>
+      <text x="64" y="2222">multi-bot fleet from a single codebase</text>
+    </g>
+    <g stroke="#FFFFFF" stroke-opacity=".05">
+      <line x1="40" y1="1946" x2="754" y2="1946"/>
+      <line x1="40" y1="1982" x2="754" y2="1982"/>
+      <line x1="40" y1="2018" x2="754" y2="2018"/>
+      <line x1="40" y1="2054" x2="754" y2="2054"/>
+      <line x1="40" y1="2090" x2="754" y2="2090"/>
+      <line x1="40" y1="2126" x2="754" y2="2126"/>
+      <line x1="40" y1="2162" x2="754" y2="2162"/>
+      <line x1="40" y1="2198" x2="754" y2="2198"/>
+    </g>
+    <g stroke="#5A5A6E" stroke-width="1.6" stroke-linecap="round" fill="none">
+      <use href="#tickX" transform="translate(587,1930)"/>
+      <use href="#tickX" transform="translate(587,1966)"/>
+      <use href="#tickX" transform="translate(587,2002)"/>
+      <use href="#tickX" transform="translate(587,2038)"/>
+      <use href="#tickX" transform="translate(587,2074)"/>
+      <use href="#tickX" transform="translate(587,2110)"/>
+      <use href="#tickX" transform="translate(587,2146)"/>
+      <use href="#tickX" transform="translate(587,2182)"/>
+      <use href="#tickX" transform="translate(587,2218)"/>
+    </g>
+    <g stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <use href="#tickOK" transform="translate(697,1930)" stroke="#5EE7DF"/>
+      <use href="#tickOK" transform="translate(697,1966)" stroke="#FFB86B"/>
+      <use href="#tickOK" transform="translate(697,2002)" stroke="#5EE7DF"/>
+      <use href="#tickOK" transform="translate(697,2038)" stroke="#FFB86B"/>
+      <use href="#tickOK" transform="translate(697,2074)" stroke="#5EE7DF"/>
+      <use href="#tickOK" transform="translate(697,2110)" stroke="#FFB86B"/>
+      <use href="#tickOK" transform="translate(697,2146)" stroke="#5EE7DF"/>
+      <use href="#tickOK" transform="translate(697,2182)" stroke="#FFB86B"/>
+      <use href="#tickOK" transform="translate(697,2218)" stroke="#5EE7DF"/>
+    </g>
+  </g>
+  <text x="397" y="2262" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#8A8AA0">checked the competition so you don&#8217;t have to.</text>
+
+  <!-- =================== [04] COMMAND DECK ===================== -->
+  <text x="397" y="2304" text-anchor="middle" font-family="Consolas, monospace" font-size="11" letter-spacing="3" fill="#FFB86B">[ 04 ]</text>
+  <text x="397" y="2342" text-anchor="middle" font-size="30" font-weight="700" fill="#F5F4F8">the command deck</text>
+  <text x="397" y="2370" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" fill="#8A8AA0">slash or custom prefix &#183; short aliases included (/p, /q, /lb, /dc &#8230;)</text>
+  <g font-family="Consolas, monospace" font-size="9.5" text-anchor="middle">
+    <g transform="translate(110,2336) rotate(-6)">
+      <rect x="-29" y="-10" width="58" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#5EE7DF" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">techno</text>
+    </g>
+    <g transform="translate(684,2336) rotate(6)">
+      <rect x="-23" y="-10" width="46" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#FFB86B" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">soul</text>
+    </g>
+  </g>
+
+  <!-- FOR EVERYONE -->
+  <line x1="40" y1="2398" x2="257" y2="2398" stroke="#5EE7DF" stroke-opacity=".25"/>
+  <line x1="537" y1="2398" x2="754" y2="2398" stroke="#5EE7DF" stroke-opacity=".25"/>
+  <text x="397" y="2402" text-anchor="middle" font-family="Consolas, monospace" font-size="10" letter-spacing="3" fill="#5EE7DF">FOR EVERYONE &#8212; 42 COMMANDS</text>
+
+  <text x="397" y="2430" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" letter-spacing="3" fill="#8A8AA0">PLAYBACK</text>
+  <g font-family="Consolas, monospace" font-size="10.5" fill="#C9C9D6">
+    <rect x="164" y="2442" width="50" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="173" y="2458">/play</text>
+    <rect x="224" y="2442" width="56" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="233" y="2458">/pause</text>
+    <rect x="290" y="2442" width="62" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="299" y="2458">/resume</text>
+    <rect x="362" y="2442" width="50" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="371" y="2458">/stop</text>
+    <rect x="422" y="2442" width="50" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="431" y="2458">/skip</text>
+    <rect x="482" y="2442" width="75" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="491" y="2458">/previous</text>
+    <rect x="567" y="2442" width="62" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="576" y="2458">/replay</text>
+    <rect x="221" y="2476" width="50" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="230" y="2492">/seek</text>
+    <rect x="281" y="2476" width="62" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="290" y="2492">/volume</text>
+    <rect x="353" y="2476" width="50" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="362" y="2492">/loop</text>
+    <rect x="413" y="2476" width="81" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="422" y="2492">/loopqueue</text>
+    <rect x="504" y="2476" width="68" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="513" y="2492">/shuffle</text>
+  </g>
+
+  <text x="397" y="2530" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" letter-spacing="3" fill="#8A8AA0">QUEUE &amp; SESSION</text>
+  <g font-family="Consolas, monospace" font-size="10.5" fill="#C9C9D6">
+    <rect x="167" y="2542" width="56" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="176" y="2558">/queue</text>
+    <rect x="233" y="2542" width="87" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="242" y="2558">/clearqueue</text>
+    <rect x="330" y="2542" width="50" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="339" y="2558">/move</text>
+    <rect x="390" y="2542" width="62" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="399" y="2558">/remove</text>
+    <rect x="462" y="2542" width="87" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="471" y="2558">/nowplaying</text>
+    <rect x="559" y="2542" width="68" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="568" y="2558">/history</text>
+    <rect x="248" y="2576" width="62" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="257" y="2592">/lyrics</text>
+    <rect x="320" y="2576" width="62" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="329" y="2592">/search</text>
+    <rect x="392" y="2576" width="75" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="401" y="2592">/autoplay</text>
+    <rect x="477" y="2576" width="68" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="486" y="2592">/session</text>
+  </g>
+
+  <text x="397" y="2630" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" letter-spacing="3" fill="#8A8AA0">STUDIO FILTERS</text>
+  <g font-family="Consolas, monospace" font-size="10.5" fill="#C9C9D6">
+    <rect x="82"  y="2642" width="81" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="91"  y="2658">/bassboost</text>
+    <rect x="173" y="2642" width="81" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="182" y="2658">/nightcore</text>
+    <rect x="264" y="2642" width="81" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="273" y="2658">/vaporwave</text>
+    <rect x="355" y="2642" width="68" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="364" y="2658">/karaoke</text>
+    <rect x="433" y="2642" width="37" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="442" y="2658">/8d</text>
+    <rect x="480" y="2642" width="75" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="489" y="2658">/chipmunk</text>
+    <rect x="565" y="2642" width="81" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="574" y="2658">/deepvoice</text>
+    <rect x="656" y="2642" width="56" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="665" y="2658">/reset</text>
+  </g>
+
+  <text x="397" y="2696" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" letter-spacing="3" fill="#8A8AA0">LIBRARY &amp; SOCIAL</text>
+  <g font-family="Consolas, monospace" font-size="10.5" fill="#C9C9D6">
+    <rect x="128" y="2708" width="75"  height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="137" y="2724">/playlist</text>
+    <rect x="213" y="2708" width="75"  height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="222" y="2724">/favorite</text>
+    <rect x="298" y="2708" width="100" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="307" y="2724">/savefavorite</text>
+    <rect x="408" y="2708" width="68"  height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="417" y="2724">/profile</text>
+    <rect x="486" y="2708" width="94"  height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="495" y="2724">/leaderboard</text>
+    <rect x="590" y="2708" width="75"  height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="599" y="2724">/dedicate</text>
+  </g>
+
+  <text x="397" y="2762" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" letter-spacing="3" fill="#8A8AA0">UTILITY</text>
+  <g font-family="Consolas, monospace" font-size="10.5" fill="#C9C9D6">
+    <rect x="194" y="2774" width="50" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="203" y="2790">/join</text>
+    <rect x="254" y="2774" width="87" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="263" y="2790">/disconnect</text>
+    <rect x="351" y="2774" width="50" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="360" y="2790">/ping</text>
+    <rect x="411" y="2774" width="56" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="420" y="2790">/stats</text>
+    <rect x="477" y="2774" width="62" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="486" y="2790">/engine</text>
+    <rect x="549" y="2774" width="50" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#5EE7DF" stroke-opacity=".35"/><text x="558" y="2790">/help</text>
+  </g>
+
+  <!-- FOR SERVER ADMINS -->
+  <line x1="40" y1="2836" x2="234" y2="2836" stroke="#FFB86B" stroke-opacity=".25"/>
+  <line x1="560" y1="2836" x2="754" y2="2836" stroke="#FFB86B" stroke-opacity=".25"/>
+  <text x="397" y="2840" text-anchor="middle" font-family="Consolas, monospace" font-size="10" letter-spacing="3" fill="#FFB86B">FOR SERVER ADMINS &#8212; 14 COMMANDS</text>
+
+  <text x="397" y="2868" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" letter-spacing="3" fill="#8A8AA0">CHANNEL SETUP &amp; 24/7</text>
+  <g font-family="Consolas, monospace" font-size="10.5" fill="#C9C9D6">
+    <rect x="107" y="2880" width="56"  height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="116" y="2896">/setup</text>
+    <rect x="173" y="2880" width="87"  height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="182" y="2896">/clearsetup</text>
+    <rect x="270" y="2880" width="75"  height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="279" y="2896">/getsetup</text>
+    <rect x="355" y="2880" width="87"  height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="364" y="2896">/temp-setup</text>
+    <rect x="452" y="2880" width="119" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="461" y="2896">/clear-tempsetup</text>
+    <rect x="581" y="2880" width="106" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="590" y="2896">/get-tempsetup</text>
+  </g>
+
+  <text x="397" y="2934" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" letter-spacing="3" fill="#8A8AA0">DJ &amp; PLAYER CONTROL</text>
+  <g font-family="Consolas, monospace" font-size="10.5" fill="#C9C9D6">
+    <rect x="120" y="2946" width="37" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="129" y="2962">/dj</text>
+    <rect x="167" y="2946" width="56" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="176" y="2962">/setdj</text>
+    <rect x="233" y="2946" width="68" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="242" y="2962">/cleardj</text>
+    <rect x="311" y="2946" width="62" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="320" y="2962">/djlock</text>
+    <rect x="383" y="2946" width="75" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="392" y="2962">/djunlock</text>
+    <rect x="468" y="2946" width="62" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="477" y="2962">/button</text>
+    <rect x="540" y="2946" width="43" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="549" y="2962">/fix</text>
+    <rect x="593" y="2946" width="81" height="24" rx="12" fill="#FFFFFF" fill-opacity=".03" stroke="#FFB86B" stroke-opacity=".35"/><text x="602" y="2962">/adminhelp</text>
+  </g>
+
+  <!-- ===================== STAT BAND =========================== -->
+  <line x1="40" y1="3030" x2="754" y2="3030" stroke="#FFFFFF" stroke-opacity=".1"/>
+  <line x1="40" y1="3110" x2="754" y2="3110" stroke="#FFFFFF" stroke-opacity=".1"/>
+  <g stroke="#2A2A36">
+    <line x1="218" y1="3050" x2="218" y2="3090"/>
+    <line x1="397" y1="3050" x2="397" y2="3090"/>
+    <line x1="576" y1="3050" x2="576" y2="3090"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="129" y="3076" font-size="28" font-weight="800" fill="url(#blend)">56</text>
+    <text x="129" y="3098" font-family="Consolas, monospace" font-size="9.5" letter-spacing="2" fill="#8A8AA0">COMMANDS</text>
+    <text x="308" y="3076" font-size="28" font-weight="800" fill="url(#cool)">5</text>
+    <text x="308" y="3098" font-family="Consolas, monospace" font-size="9.5" letter-spacing="2" fill="#8A8AA0">PLATFORMS</text>
+    <text x="486" y="3076" font-size="28" font-weight="800" fill="url(#warm)">7</text>
+    <text x="486" y="3098" font-family="Consolas, monospace" font-size="9.5" letter-spacing="2" fill="#8A8AA0">FILTERS</text>
+    <text x="665" y="3076" font-size="28" font-weight="800" fill="url(#blend)">100</text>
+    <text x="665" y="3098" font-family="Consolas, monospace" font-size="9.5" letter-spacing="2" fill="#8A8AA0">TRACK QUEUE</text>
+  </g>
+
+  <!-- ======================== CTA ============================== -->
+  <ellipse cx="397" cy="3196" rx="190" ry="44" fill="none" stroke="url(#blend)" stroke-opacity=".2"/>
+  <circle cx="207" cy="3196" r="3" fill="#5EE7DF"/>
+  <circle cx="587" cy="3196" r="3" fill="#FFB86B"/>
+  <use href="#spark" transform="translate(180,3146) scale(.6)" fill="#5EE7DF"/>
+  <use href="#spark" transform="translate(614,3146) scale(.6)" fill="#FFB86B"/>
+  <use href="#spark" transform="translate(250,3196) scale(.8)" fill="#5EE7DF"/>
+  <use href="#spark" transform="translate(544,3196) scale(.8)" fill="#FFB86B"/>
+  <rect x="297" y="3174" width="200" height="44" rx="22" fill="url(#blend)"/>
+  <text x="397" y="3201" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="2" fill="#0B0B10">GET MEWZIK &#8594;</text>
+  <g font-family="Consolas, monospace" font-size="9.5" text-anchor="middle">
+    <g transform="translate(140,3196) rotate(-8)">
+      <rect x="-26" y="-10" width="52" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#FFB86B" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">k-pop</text>
+    </g>
+    <g transform="translate(654,3196) rotate(8)">
+      <rect x="-23" y="-10" width="46" height="20" rx="10" fill="#FFFFFF" fill-opacity=".04" stroke="#5EE7DF" stroke-opacity=".4"/>
+      <text y="3.5" fill="#C9C9D6">desi</text>
+    </g>
+  </g>
+  <text x="397" y="3248" text-anchor="middle" font-size="12" fill="#8A8AA0">premium sound, zero friction. press play.</text>
+
+  <!-- ======================= FOOTER ============================ -->
+  <line x1="40" y1="3300" x2="754" y2="3300" stroke="#FFFFFF" stroke-opacity=".12"/>
+  <text x="40" y="3328" font-family="Consolas, monospace" font-size="9" letter-spacing="2" fill="#8A8AA0">MEWZIK &#169; 2026</text>
+  <circle cx="306" cy="3324" r="3" fill="#5EE7DF"/>
+  <text x="403" y="3328" text-anchor="middle" font-family="Consolas, monospace" font-size="9" letter-spacing="2" fill="#8A8AA0">ONLINE &#8212; ALL SYSTEMS GO</text>
+  <text x="754" y="3328" text-anchor="end" font-family="Consolas, monospace" font-size="9" letter-spacing="2" fill="#8A8AA0">MADE FOR DISCORD</text>
+  <rect x="0" y="3365" width="794" height="4" fill="url(#blend)"/>
+</svg>
