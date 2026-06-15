@@ -4,6 +4,7 @@ import voltricx
 from utils.helper_function.VoltricxPlayer import LavaMusic
 from utils.helper_function.unified_cache_manager import unified_cache
 from utils.helper_function.autoplay_cache import autoplay_cache
+from utils.embed_designs.voltricx_events import rejoin_failed
 import asyncpg
 import asyncio
 import os
@@ -17,6 +18,7 @@ class AutoStop(commands.Cog):
         self.bot = bot
         self._rejoin_tasks: dict = {}
         self._rejoin_attempts: dict[int, int] = {}
+        self._rejoin_in_progress: set[int] = set()
         self._max_rejoin_attempts = 3
         self.check_vc_task.start()
         
@@ -165,9 +167,11 @@ class AutoStop(commands.Cog):
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
         if member.id != self.bot.user.id:
             return
-        # Bot connected to a channel — reset rejoin failure counter
+        # Bot connected to a channel — reset rejoin failure counter only if not mid-rejoin
+        # (a connect event fires during the rejoin attempt itself; resetting there causes infinite loop)
         if after.channel is not None:
-            self._rejoin_attempts.pop(member.guild.id, None)
+            if member.guild.id not in self._rejoin_in_progress:
+                self._rejoin_attempts.pop(member.guild.id, None)
             return
         # Bot disconnected (had a channel, now has none)
         if before.channel is None:
@@ -206,6 +210,7 @@ class AutoStop(commands.Cog):
             return
 
         self._rejoin_attempts[guild.id] = self._rejoin_attempts.get(guild.id, 0) + 1
+        self._rejoin_in_progress.add(guild.id)
         try:
             existing_vc = guild.voice_client
             if existing_vc:
@@ -223,6 +228,7 @@ class AutoStop(commands.Cog):
             await asyncio.sleep(2)
 
             await voice_channel.connect(cls=LavaMusic)
+            self._rejoin_in_progress.discard(guild.id)
             self._rejoin_attempts.pop(guild.id, None)
             try:
                 await voice_channel.edit(status="Ready to Play !")
@@ -230,8 +236,34 @@ class AutoStop(commands.Cog):
                 pass
             print(f"\033[92m[INFO] Auto-rejoined\033[0m: {voice_channel.name} in {guild.name}")
         except Exception as e:
-            remaining = self._max_rejoin_attempts - self._rejoin_attempts.get(guild.id, 0)
+            self._rejoin_in_progress.discard(guild.id)
+            attempts = self._rejoin_attempts.get(guild.id, 0)
+            remaining = self._max_rejoin_attempts - attempts
             print(f"\033[91m[ERROR] Auto-rejoin failed\033[0m: {guild.name} — {e}{' (giving up)' if remaining <= 0 else f' ({remaining} attempts left)'}")
+            if remaining <= 0:
+                await self._cleanup_after_failed_rejoin(guild, channel_data)
+
+    async def _cleanup_after_failed_rejoin(self, guild: discord.Guild, channel_data: dict):
+        self._rejoin_attempts.pop(guild.id, None)
+
+        # Destroy zombie Lavalink player
+        for node in voltricx.Pool.nodes().values():
+            player: LavaMusic = node.players.get(guild.id)
+            if player:
+                autoplay_cache.stop_session(guild.id)
+                try:
+                    await player.disconnect()
+                except Exception:
+                    pass
+                break
+
+        # Notify setup text channel
+        text_channel = guild.get_channel(channel_data.get("text_channel_id"))
+        if text_channel and isinstance(text_channel, discord.TextChannel):
+            try:
+                await text_channel.send(view=rejoin_failed())
+            except (discord.Forbidden, discord.HTTPException):
+                pass
 
     def cog_unload(self):
         self.check_vc_task.cancel()
@@ -239,6 +271,7 @@ class AutoStop(commands.Cog):
             task.cancel()
         self._rejoin_tasks.clear()
         self._rejoin_attempts.clear()
+        self._rejoin_in_progress.clear()
 
         # Cancel batch processing task
         if self.batch_task:

@@ -460,22 +460,9 @@ class Voltricx_Event(commands.Cog):
         """Handle when websocket to voice server is closed"""
         try:
             print(f"\033[91m[ERROR] Websocket Closed\033[0m: Code {code} - Reason: {reason} - By Remote: {by_remote}")
-            
-            try:
-                if player.home:
-                    await player.home.send(view=vx_design.websocket_closed(code, reason, by_remote))
-            except Exception as e:
-                await self.handle_voltricx_exception(e, "Websocket Closed - Notification")
-            
-            # Attempt to reconnect if possible
-            try:
-                if player.guild.voice_client:
-                    await player.guild.voice_client.disconnect()
-                    # The bot will need to be manually reconnected
-                    print(f"\033[93m[INFO] Manual Reconnection Required\033[0m: Guild {player.guild.id}")
-            except Exception as e:
-                await self.handle_voltricx_exception(e, "Websocket Closed - Reconnection")
-                
+            # Lavalink handles its own websocket reconnect internally — do NOT call
+            # voice_client.disconnect() here. Disconnecting on every voice server
+            # hiccup is what caused bots to leave VC during Discord instability.
         except Exception as e:
             await self.handle_voltricx_exception(e, "Websocket Closed Handler")
 
