@@ -35,3 +35,10 @@ def node_disconnected() -> discord.ui.LayoutView:
         title="Node Disconnected",
         description="The music node has been disconnected. The bot will attempt to reconnect automatically.\n\n--- \nPlease wait for reconnection...",
     )
+
+
+def rejoin_failed() -> discord.ui.LayoutView:
+    return build_basic_layout(
+        title="Auto-Rejoin Failed",
+        description="Failed to reconnect to the voice channel after 3 attempts. This is usually caused by Discord voice server instability.\n\n--- \nUse `/play` to start a new session when you're ready.",
+    )
