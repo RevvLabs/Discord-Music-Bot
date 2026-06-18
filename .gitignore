@@ -175,3 +175,4 @@ backups
 *.rar
 # Lavalink server config contains credentials - ship the .example instead
 application.yml
+*.zip
