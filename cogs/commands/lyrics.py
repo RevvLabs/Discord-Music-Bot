@@ -1,5 +1,6 @@
 import asyncio
 import re
+import time
 import aiohttp
 import discord
 from unidecode import unidecode
@@ -14,10 +15,17 @@ from utils.check_decorators.maintenance import maintenance_check
 from utils.helper_function.voice_connected import ensure_voice
 from utils.helper_function.VoltricxPlayer import LavaMusic
 from utils.helper_function.bot_config import EMBED_COLOR
-from utils.embed_designs.lyrics import lyrics_container, lyrics_not_found, nothing_playing
+from utils.embed_designs.lyrics import lyrics_container, lyrics_not_found, nothing_playing, searching
 
-_CHUNK_SIZE = 1500
+_CHUNK_SIZE = 3800  # Components v2 caps total message text at 4000; leave room for title + page counter
 _LRCLIB_BASE = "https://lrclib.net/api"
+# Upper bound only — lrclib is often slow (multi-second) and sometimes 502s,
+# so a tight per-read timeout makes valid lyrics fail. 15s caps a true hang
+# without cutting off slow-but-working responses. Cache keeps repeats instant.
+_HTTP_TIMEOUT = aiohttp.ClientTimeout(total=15)
+# Cache resolved lyrics in-memory so repeat lookups are instant.
+_CACHE_TTL = 3600  # seconds
+_CACHE_MAX = 256
 _TIMESTAMP = re.compile(r'^\[\d+:\d+\.\d+\]\s?', re.MULTILINE)
 _PARENS = re.compile(r'\s*[\(\[【][^\)\]】]*[\)\]】]', re.IGNORECASE)
 _PIPE   = re.compile(r'\s*[|].*$')
@@ -83,8 +91,10 @@ def _to_hinglish(text: str) -> str:
 
 
 class LyricsPaginationView(discord.ui.LayoutView):
-    def __init__(self, chunks: list[str], title: str, ctx: commands.Context):
-        super().__init__(timeout=60)
+    def __init__(self, chunks: list[str], title: str, ctx: commands.Context, persistent: bool = False):
+        # persistent=True → no auto-timeout; the view lives until the song ends
+        # (the Lyrics cog deletes it on track end / inactivity).
+        super().__init__(timeout=None if persistent else 60)
         self.chunks = chunks
         self.title = title
         self.ctx = ctx
@@ -242,6 +252,64 @@ async def _lrclib_for_track(
 class Lyrics(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self._session: aiohttp.ClientSession | None = None
+        self._cache: dict[str, tuple[str, str | None, float]] = {}
+        # guild_id -> list of (message, view) for current-track lyrics still on screen.
+        self._active: dict[int, list[tuple[discord.Message, "LyricsPaginationView"]]] = {}
+
+    async def cog_load(self):
+        # One keep-alive session for the cog's lifetime — avoids a fresh
+        # TCP+TLS handshake to lrclib on every command.
+        self._session = aiohttp.ClientSession(
+            timeout=_HTTP_TIMEOUT,
+            connector=aiohttp.TCPConnector(limit=20, ttl_dns_cache=300),
+        )
+
+    async def cog_unload(self):
+        for entries in self._active.values():
+            for _, view in entries:
+                view.stop()
+        self._active.clear()
+        if self._session and not self._session.closed:
+            await self._session.close()
+
+    async def _clear_active(self, guild_id: int) -> None:
+        """Delete + stop any current-track lyrics shown in this guild (song changed/ended)."""
+        entries = self._active.pop(guild_id, None)
+        if not entries:
+            return
+        for message, view in entries:
+            view.stop()
+            try:
+                await message.delete()
+            except Exception:
+                pass
+
+    @commands.Cog.listener()
+    async def on_voltricx_track_end(self, player, track, reason):
+        if player and player.guild:
+            await self._clear_active(player.guild.id)
+
+    @commands.Cog.listener()
+    async def on_voltricx_inactive_player(self, player):
+        if player and player.guild:
+            await self._clear_active(player.guild.id)
+
+    def _cache_get(self, key: str) -> tuple[str, str | None] | None:
+        hit = self._cache.get(key)
+        if not hit:
+            return None
+        text, title, expiry = hit
+        if time.monotonic() > expiry:
+            self._cache.pop(key, None)
+            return None
+        return text, title
+
+    def _cache_put(self, key: str, text: str, title: str | None) -> None:
+        if len(self._cache) >= _CACHE_MAX:
+            # Drop the oldest entry (dicts keep insertion order).
+            self._cache.pop(next(iter(self._cache)), None)
+        self._cache[key] = (text, title, time.monotonic() + _CACHE_TTL)
 
     @commands.hybrid_command(name="lyrics", description="Show lyrics for the current song or a search query.")
     @commands.cooldown(1, 5, BucketType.user)
@@ -256,15 +324,38 @@ class Lyrics(commands.Cog):
         await ctx.defer()
 
         player: LavaMusic = ctx.guild.voice_client
-        text = None
-        display_title = query or "this track"
 
-        async with aiohttp.ClientSession() as session:
+        # Nothing playing and no query → no search to run.
+        if not query and (not player or not player.current):
+            await ctx.send(view=nothing_playing())
+            return
+
+        text = None
+        display_title = query or (player.current.title if player and player.current else "this track")
+
+        # Send a live "searching" message immediately; we edit THIS same message
+        # once the lookup finishes (found → lyrics, miss → not-found).
+        status_msg = await ctx.send(view=searching(display_title))
+
+        # Build a cache key up front so repeat lookups skip the network entirely.
+        if query:
+            cache_key = f"q:{query.lower().strip()}"
+        elif player and player.current:
+            tr = player.current
+            cache_key = f"t:{(tr.title or '').lower()}|{(tr.author or '').lower()}|{tr.length // 1000}"
+        else:
+            cache_key = None
+
+        cached = self._cache_get(cache_key) if cache_key else None
+        if cached:
+            text, ctitle = cached
+            if ctitle:
+                display_title = ctitle
+
+        session = self._session
+        if not cached:
             try:
                 if not query:
-                    if not player or not player.current:
-                        await ctx.send(view=nothing_playing())
-                        return
                     track = player.current
                     display_title = track.title
                     print(f"{ORANGE}[lyrics]{RESET} source={track.source!r} title={track.title!r} author={track.author!r} length={track.length} plugin_info={track.plugin_info}")
@@ -298,16 +389,25 @@ class Lyrics(commands.Cog):
             except Exception:
                 pass
 
+            # Cache positive results only.
+            if cache_key and text and text.strip():
+                self._cache_put(cache_key, text, display_title)
+
         if not text or not text.strip():
-            await ctx.send(view=lyrics_not_found(display_title))
+            await status_msg.edit(view=lyrics_not_found(display_title))
             return
 
         text = _to_hinglish(text)
         chunks = _chunk_lyrics(text)
 
-        view = LyricsPaginationView(chunks, display_title, ctx)
-        msg = await ctx.send(view=view)
-        view.message = msg
+        # Current-track lyrics (no query) are tied to the playing song: keep the
+        # buttons alive with no timeout, and auto-delete when the song ends.
+        track_linked = not query
+        view = LyricsPaginationView(chunks, display_title, ctx, persistent=track_linked)
+        await status_msg.edit(view=view)
+        view.message = status_msg
+        if track_linked:
+            self._active.setdefault(ctx.guild.id, []).append((status_msg, view))
 
 
 async def setup(bot) -> None:

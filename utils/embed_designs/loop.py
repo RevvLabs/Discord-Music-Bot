@@ -3,7 +3,8 @@ from utils.helper_function.embed_layout import build_basic_layout
 
 
 def loop_updated(msg: str) -> discord.ui.LayoutView:
-    return build_basic_layout(description=f"### Loop\n{msg}")
+    legend = "-# `/loop` cycles:  ➡️ Off → 🔂 Track → 🔁 Queue → ➡️ Off"
+    return build_basic_layout(description=f"### Loop\n{msg}\n\n{legend}")
 
 
 def loop_queue_updated(msg: str) -> discord.ui.LayoutView:

@@ -13,6 +13,15 @@ def lyrics_container(title: str, chunk: str, current_page: int, total_pages: int
     )
 
 
+def searching(display_title: str) -> discord.ui.LayoutView:
+    v = discord.ui.LayoutView()
+    v.add_item(discord.ui.Container(
+        discord.ui.TextDisplay(content=f"### 🔍 Searching lyrics\nLooking up lyrics for **{display_title}**…"),
+        accent_color=EMBED_COLOR,
+    ))
+    return v
+
+
 def lyrics_not_found(display_title: str) -> discord.ui.LayoutView:
     v = discord.ui.LayoutView()
     v.add_item(discord.ui.Container(

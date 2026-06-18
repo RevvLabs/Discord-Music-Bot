@@ -39,13 +39,13 @@ class Loop(commands.Cog):
 
             if player.queue.mode == voltricx.QueueMode.normal:
                 player.queue.mode = voltricx.QueueMode.loop
-                msg = "🔂 **Loop Track** enabled — repeating the current song."
+                msg = "🔂 **Loop Track** enabled — repeating the current song.\nRun `/loop` again → switches to **Loop Queue**."
             elif player.queue.mode == voltricx.QueueMode.loop:
                 player.queue.mode = voltricx.QueueMode.loop_all
-                msg = "🔁 **Loop Queue** enabled — repeating the entire queue."
+                msg = "🔁 **Loop Queue** enabled — repeating the entire queue.\nRun `/loop` again → turns **Loop off**."
             else:
                 player.queue.mode = voltricx.QueueMode.normal
-                msg = "➡️ **Loop off** — playing normally."
+                msg = "➡️ **Loop off** — playing normally.\nRun `/loop` again → switches to **Loop Track**."
 
             schedule_delete(await ctx.send(view=loop_design.loop_updated(msg)))
         except Exception as e:
