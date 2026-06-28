@@ -13,6 +13,7 @@ from utils.check_decorators.blacklist_checker import is_not_blacklisted
 from utils.check_decorators.maintenance import maintenance_check
 from utils.check_decorators.dj_checker import dj_check_member
 from utils.helper_function.auto_delete import schedule_delete
+from utils.helper_function.safe_send import safe_send_file
 
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -402,7 +403,25 @@ class Profile(commands.Cog):
             guild_name=ctx.guild.name,
         )
 
-        schedule_delete(await ctx.send(file=discord.File(buf, filename="profile_card.png")))
+        # Upload the card. If the guild has file uploads limited (Discord error
+        # 400001), safe_send_file posts the text fallback instead of failing.
+        from utils.embed_designs import profile as prof_design
+        current_badge, _, _ = _badge_info(total_songs)
+        fallback = prof_design.card_text_fallback(
+            display_name=target.display_name,
+            badge=current_badge or "Beginner",
+            total_songs=total_songs,
+            listening_time=_time_str(total_minutes),
+            server_rank=server_rank,
+            server_songs=server_songs,
+            fav_count=fav_count,
+            playlist_count=playlist_count,
+            top_sources=[(r["source"], r["count"]) for r in source_rows[:3]],
+            guild_name=ctx.guild.name,
+        )
+        schedule_delete(await safe_send_file(
+            ctx, data=buf, filename="profile_card.png", fallback=fallback,
+        ))
 
 
 async def setup(bot):

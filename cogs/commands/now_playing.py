@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from utils.helper_function.bot_config import EMBED_COLOR
 from utils.embed_designs import now_playing as np_design
 from utils.helper_function.auto_delete import schedule_delete
+from utils.helper_function.safe_send import safe_send_file
 
 load_dotenv()
 BOT_NAME = os.getenv("BOT_NAME", "Mewzik")
@@ -257,7 +258,19 @@ class Now_Playing(commands.Cog):
                 length=length,
             )
 
-            schedule_delete(await ctx.send(file=discord.File(buf, filename="now_playing.png")))
+            # If the guild has file uploads limited (Discord error 400001),
+            # safe_send_file posts the text fallback instead of failing silently.
+            fallback = np_design.now_playing_text(
+                title=track.title,
+                author=track.author,
+                requested_by=getattr(requestor, "mention", str(requestor)),
+                elapsed=self.format_time(position),
+                duration=self.format_time(length),
+                progress_percent=progress_percent,
+            )
+            schedule_delete(await safe_send_file(
+                ctx, data=buf, filename="now_playing.png", fallback=fallback,
+            ))
         else:
             schedule_delete(await ctx.send(view=np_design.not_playing()))
 
