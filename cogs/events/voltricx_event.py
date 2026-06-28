@@ -268,6 +268,13 @@ class Voltricx_Event(commands.Cog):
         # Clear any active autoplay session for this guild
         autoplay_cache.stop_session(guild_id)
 
+        # Release any temp no-prefix VC ownership held by this bot for this channel.
+        try:
+            if player.channel:
+                await unified_cache.delete_vc_assignment(guild_id, player.channel.id, self.bot.user.id)
+        except Exception:
+            pass
+
         # Always reset channel status
         try:
             voice_channel = player.channel

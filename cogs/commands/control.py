@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord.ui import Button
 from utils.check_decorators.blacklist_checker import is_not_blacklisted
 from utils.check_decorators.maintenance import maintenance_check
+from utils.check_decorators.admin_or_owner import admin_or_owner
 from utils.helper_function.setup_enforcer import enforce_setup
 from utils.helper_function.unified_cache_manager import unified_cache
 from discord.ext.commands import BucketType
@@ -36,7 +37,7 @@ class Controls(commands.Cog):
         await unified_cache.set_hide_controls(guild_id, self.bot.user.id, hide)
 
     @commands.hybrid_command(name="button", description="Toggle the visibility of the music control buttons.", aliases=['btn'])
-    @commands.has_permissions(administrator=True) 
+    @admin_or_owner()
     @commands.cooldown(1, 3, BucketType.user)
     @is_not_blacklisted()
     @maintenance_check()

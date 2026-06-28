@@ -63,6 +63,12 @@ class UnifiedCacheManager:
         self._temp_setup_cache: Dict[Tuple[int, int], Optional[dict]] = {}
         self._temp_setup_timestamps: Dict[Tuple[int, int], float] = {}
 
+        # Temp VC ownership cache: (guild_id, voice_channel_id) -> bot_id or None.
+        # Very short TTL — ownership must stay fresh; writes invalidate the key.
+        self._vc_assignment_cache: Dict[Tuple[int, int], Optional[int]] = {}
+        self._vc_assignment_timestamps: Dict[Tuple[int, int], float] = {}
+        self._vc_assignment_ttl = 3.0  # seconds
+
         self.cache_ttl = cache_ttl
         self._lock = asyncio.Lock()
         self.DATABASE_URL = os.getenv("DATABASE_URL")
@@ -712,6 +718,199 @@ class UnifiedCacheManager:
         except Exception as e:
             print(f"[ERROR] Failed to fetch temp setup from database: {e}")
             return None
+        finally:
+            if conn:
+                await conn.close()
+
+    # =============================================================================
+    # TEMP VC ASSIGNMENTS (no-prefix ownership for temp setup bots)
+    # =============================================================================
+
+    def _invalidate_vc_assignment(self, guild_id: int, voice_channel_id: int) -> None:
+        key = (guild_id, voice_channel_id)
+        self._vc_assignment_cache.pop(key, None)
+        self._vc_assignment_timestamps.pop(key, None)
+
+    async def get_vc_assignment(self, guild_id: int, voice_channel_id: int) -> Optional[int]:
+        """Return the bot_id currently owning this VC, or None. Cached with a short TTL."""
+        if not self.DATABASE_URL:
+            return None
+        key = (guild_id, voice_channel_id)
+        async with self._lock:
+            ts = self._vc_assignment_timestamps.get(key)
+            if ts is not None and (asyncio.get_event_loop().time() - ts) < self._vc_assignment_ttl:
+                return self._vc_assignment_cache.get(key)
+        conn = None
+        try:
+            conn = await asyncpg.connect(self.DATABASE_URL)
+            row = await conn.fetchrow(
+                "SELECT bot_id FROM temp_vc_assignments WHERE guild_id = $1 AND voice_channel_id = $2",
+                guild_id, voice_channel_id
+            )
+            bot_id = row["bot_id"] if row else None
+            async with self._lock:
+                self._vc_assignment_cache[key] = bot_id
+                self._vc_assignment_timestamps[key] = asyncio.get_event_loop().time()
+            return bot_id
+        except Exception as e:
+            print(f"[ERROR] Failed to read vc assignment: {e}")
+            return None
+        finally:
+            if conn:
+                await conn.close()
+
+    async def claim_vc_assignment(
+        self, guild_id: int, voice_channel_id: int, bot_id: int, text_channel_id: int = None
+    ) -> Optional[int]:
+        """
+        Atomically claim an unowned VC. Returns the bot_id that ends up owning it
+        (mine if I won, the existing owner if it was already taken). Safe across
+        the separate bot processes via the PK + ON CONFLICT DO NOTHING.
+        """
+        if not self.DATABASE_URL:
+            return None
+        conn = None
+        try:
+            conn = await asyncpg.connect(self.DATABASE_URL)
+            row = await conn.fetchrow(
+                """
+                INSERT INTO temp_vc_assignments (guild_id, voice_channel_id, bot_id, text_channel_id)
+                VALUES ($1, $2, $3, $4)
+                ON CONFLICT (guild_id, voice_channel_id) DO NOTHING
+                RETURNING bot_id
+                """,
+                guild_id, voice_channel_id, bot_id, text_channel_id
+            )
+            if row:
+                owner = bot_id  # I won the insert
+            else:
+                existing = await conn.fetchrow(
+                    "SELECT bot_id FROM temp_vc_assignments WHERE guild_id = $1 AND voice_channel_id = $2",
+                    guild_id, voice_channel_id
+                )
+                owner = existing["bot_id"] if existing else None
+            async with self._lock:
+                self._invalidate_vc_assignment(guild_id, voice_channel_id)
+            return owner
+        except Exception as e:
+            print(f"[ERROR] Failed to claim vc assignment: {e}")
+            return None
+        finally:
+            if conn:
+                await conn.close()
+
+    async def steal_vc_assignment(
+        self, guild_id: int, voice_channel_id: int, new_bot_id: int, expected_old_bot_id: int,
+        text_channel_id: int = None,
+    ) -> bool:
+        """
+        Atomically take over a stale assignment (old owner gone from the VC).
+        Compare-and-swap on the old bot_id → exactly one winner. Returns True if I won.
+        """
+        if not self.DATABASE_URL:
+            return False
+        conn = None
+        try:
+            conn = await asyncpg.connect(self.DATABASE_URL)
+            # Grace window: never steal a freshly-claimed row — the owner may
+            # still be mid-connect (join takes ~1s and it isn't in vc.members yet).
+            row = await conn.fetchrow(
+                """
+                UPDATE temp_vc_assignments
+                SET bot_id = $3, text_channel_id = COALESCE($4, text_channel_id), assigned_at = now()
+                WHERE guild_id = $1 AND voice_channel_id = $2 AND bot_id = $5
+                  AND assigned_at < now() - interval '15 seconds'
+                RETURNING bot_id
+                """,
+                guild_id, voice_channel_id, new_bot_id, text_channel_id, expected_old_bot_id
+            )
+            async with self._lock:
+                self._invalidate_vc_assignment(guild_id, voice_channel_id)
+            return bool(row)
+        except Exception as e:
+            print(f"[ERROR] Failed to steal vc assignment: {e}")
+            return False
+        finally:
+            if conn:
+                await conn.close()
+
+    async def delete_vc_assignment(self, guild_id: int, voice_channel_id: int, bot_id: int) -> bool:
+        """Release a VC I own (scoped to bot_id = me, never touches another bot's row)."""
+        if not self.DATABASE_URL:
+            return False
+        conn = None
+        try:
+            conn = await asyncpg.connect(self.DATABASE_URL)
+            await conn.execute(
+                "DELETE FROM temp_vc_assignments WHERE guild_id = $1 AND voice_channel_id = $2 AND bot_id = $3",
+                guild_id, voice_channel_id, bot_id
+            )
+            async with self._lock:
+                self._invalidate_vc_assignment(guild_id, voice_channel_id)
+            return True
+        except Exception as e:
+            print(f"[ERROR] Failed to delete vc assignment: {e}")
+            return False
+        finally:
+            if conn:
+                await conn.close()
+
+    async def delete_bot_assignments(self, guild_id: int, bot_id: int) -> bool:
+        """Release every VC I own in a guild (config cleared / guild left / restart prune)."""
+        if not self.DATABASE_URL:
+            return False
+        conn = None
+        try:
+            conn = await asyncpg.connect(self.DATABASE_URL)
+            await conn.execute(
+                "DELETE FROM temp_vc_assignments WHERE guild_id = $1 AND bot_id = $2",
+                guild_id, bot_id
+            )
+            async with self._lock:
+                # Clear any cached entries for this guild (cheap — small dict).
+                for key in [k for k in self._vc_assignment_cache if k[0] == guild_id]:
+                    self._invalidate_vc_assignment(*key)
+            return True
+        except Exception as e:
+            print(f"[ERROR] Failed to delete bot assignments: {e}")
+            return False
+        finally:
+            if conn:
+                await conn.close()
+
+    async def delete_all_bot_assignments(self, bot_id: int) -> bool:
+        """Release every VC I own across all guilds (called on startup — I hold none yet)."""
+        if not self.DATABASE_URL:
+            return False
+        conn = None
+        try:
+            conn = await asyncpg.connect(self.DATABASE_URL)
+            await conn.execute("DELETE FROM temp_vc_assignments WHERE bot_id = $1", bot_id)
+            async with self._lock:
+                self._vc_assignment_cache.clear()
+                self._vc_assignment_timestamps.clear()
+            return True
+        except Exception as e:
+            print(f"[ERROR] Failed to delete all bot assignments: {e}")
+            return False
+        finally:
+            if conn:
+                await conn.close()
+
+    async def get_temp_setup_bot_ids(self, guild_id: int) -> list:
+        """All temp-setup bot ids configured for a guild (for the no-bot-available notifier)."""
+        if not self.DATABASE_URL:
+            return []
+        conn = None
+        try:
+            conn = await asyncpg.connect(self.DATABASE_URL)
+            rows = await conn.fetch(
+                "SELECT DISTINCT bot_id FROM temp_setup WHERE guild_id = $1", guild_id
+            )
+            return [r["bot_id"] for r in rows]
+        except Exception as e:
+            print(f"[ERROR] Failed to read temp setup bot ids: {e}")
+            return []
         finally:
             if conn:
                 await conn.close()

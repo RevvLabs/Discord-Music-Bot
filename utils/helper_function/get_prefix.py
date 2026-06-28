@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from utils.helper_function.unified_cache_manager import unified_cache
 from utils.check_decorators.dj_checker import dj_check_member
+from utils.helper_function import temp_noprefix
 
 load_dotenv()
 
@@ -67,6 +68,9 @@ async def get_prefix(bot, message):
         if await _no_prefix_active(bot, message):
             # Empty prefix LAST so the real prefix is still matched first
             # (e.g. "-skip" resolves via "-", not via the empty prefix).
+            return commands.when_mentioned_or(prefix, "")(bot, message)
+        # Separate Temp Setup no-prefix system (isolated; only fires for temp bots).
+        if await temp_noprefix.resolve(bot, message) == "":
             return commands.when_mentioned_or(prefix, "")(bot, message)
         return commands.when_mentioned_or(prefix)(bot, message)
     return commands.when_mentioned_or(os.getenv("PREFIX"))(bot, message)

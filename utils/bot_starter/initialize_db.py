@@ -13,6 +13,7 @@ from database.user_profile_schema import user_profile_database
 from database.dj_role_schema import dj_role_database
 from database.dj_command_lock_schema import dj_command_lock_database
 from database.temp_setup_schema import temp_setup_database
+from database.temp_vc_assignments_schema import temp_vc_assignments_database
 from utils.helper_function.unified_cache_manager import unified_cache
 from utils.colours.colours import *
 
@@ -32,6 +33,7 @@ async def initialize_databases():
             (dj_role_database, "dj_role_database"),
             (dj_command_lock_database, "dj_command_lock_database"),
             (temp_setup_database, "temp_setup_database"),
+            (temp_vc_assignments_database, "temp_vc_assignments_database"),
         ]
 
         # Tables with foreign keys that depend on a table above. These run

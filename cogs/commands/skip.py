@@ -49,7 +49,7 @@ class Skip(commands.Cog):
             channel = ctx.author.voice.channel
             members_in_vc = len([m for m in channel.members if not m.bot])
 
-            if members_in_vc <= 6:
+            if members_in_vc <= 3:
                 try:
                     await player.skip()
                     if player.paused:

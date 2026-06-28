@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 from utils.check_decorators.maintenance import maintenance_check
 from utils.check_decorators.blacklist_checker import is_not_blacklisted
+from utils.check_decorators.admin_or_owner import admin_or_owner
 from utils.embed_designs import channel_set as cs_design
 from utils.embed_designs import temp_setup as ts_design
 from utils.helper_function.auto_delete import schedule_delete
@@ -28,7 +29,7 @@ class SetChannels(commands.Cog):
 
     @commands.hybrid_command(name="setup", description="Set the player and voice channels for the guild.")
     @commands.cooldown(1, 5, BucketType.user)
-    @commands.has_permissions(administrator=True)
+    @admin_or_owner()
     @is_not_blacklisted()
     @maintenance_check()
     async def set_channels(self, ctx, text_channel: discord.TextChannel, voice_channel: discord.VoiceChannel):
@@ -41,7 +42,7 @@ class SetChannels(commands.Cog):
 
     @commands.hybrid_command(name="clearsetup", description="Clear the player and voice channel setup for the guild.")
     @commands.cooldown(1, 5, BucketType.user)
-    @commands.has_permissions(administrator=True)
+    @admin_or_owner()
     @is_not_blacklisted()
     @maintenance_check()
     async def clear_setup(self, ctx):
@@ -50,7 +51,7 @@ class SetChannels(commands.Cog):
 
     @commands.hybrid_command(name="getsetup", description="Get the player and voice channels for the guild.")
     @commands.cooldown(1, 5, BucketType.user)
-    @commands.has_permissions(administrator=True)
+    @admin_or_owner()
     @is_not_blacklisted()
     @maintenance_check()
     async def get_channels(self, ctx):

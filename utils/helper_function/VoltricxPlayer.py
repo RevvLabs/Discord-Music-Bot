@@ -8,6 +8,10 @@ class LavaMusic(Player):
     def __init__(self, client: discord.Client, channel: discord.abc.Connectable):
         super().__init__(client, channel)
         self.metadata = {}
+        # Idle auto-disconnect: with no timeout set, voltricx never fires
+        # on_voltricx_inactive_player, so the bot would sit in the VC forever.
+        # 300s of nothing playing → inactive event → disconnect (skipped for 24/7).
+        self.inactive_timeout = 300
         self._autoplay = voltricx.AutoPlayMode.partial
         self.source = "ytsearch"
         self.status = True

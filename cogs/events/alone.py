@@ -143,6 +143,13 @@ class AutoStop(commands.Cog):
                             player.queue.clear()
                             player._autoplay = voltricx.AutoPlayMode.partial
                             autoplay_cache.stop_session(player.guild.id)
+                            # Release any temp no-prefix VC ownership we held here.
+                            try:
+                                await unified_cache.delete_vc_assignment(
+                                    player.guild.id, vc.id, self.bot.user.id
+                                )
+                            except Exception:
+                                pass
                             if player.playing:
                                 try:
                                     await player.stop() 
@@ -178,6 +185,12 @@ class AutoStop(commands.Cog):
             return
 
         guild = member.guild
+
+        # Release any temp no-prefix VC ownership for the channel we just left.
+        try:
+            await unified_cache.delete_vc_assignment(guild.id, before.channel.id, self.bot.user.id)
+        except Exception:
+            pass
 
         attempts = self._rejoin_attempts.get(guild.id, 0)
         if attempts >= self._max_rejoin_attempts:

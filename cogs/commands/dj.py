@@ -5,6 +5,7 @@ from discord.ext.commands import BucketType
 from utils.check_decorators.blacklist_checker import is_not_blacklisted
 from utils.check_decorators.maintenance import maintenance_check
 from utils.check_decorators.dj_checker import DEFAULT_DJ_LOCKED_COMMANDS
+from utils.check_decorators.admin_or_owner import admin_or_owner
 from utils.helper_function.unified_cache_manager import unified_cache
 from utils.embed_designs import dj as dj_design
 from utils.helper_function.auto_delete import schedule_delete
@@ -22,7 +23,7 @@ class DJ(commands.Cog):
         aliases=["setdj"],
     )
     @commands.cooldown(1, 3, BucketType.guild)
-    @commands.has_permissions(manage_guild=True)
+    @admin_or_owner(manage_guild=True)
     @is_not_blacklisted()
     @maintenance_check()
     async def djset(self, ctx: commands.Context, role: discord.Role = None):
@@ -48,7 +49,7 @@ class DJ(commands.Cog):
         aliases=["cleardj"],
     )
     @commands.cooldown(1, 3, BucketType.guild)
-    @commands.has_permissions(manage_guild=True)
+    @admin_or_owner(manage_guild=True)
     @is_not_blacklisted()
     @maintenance_check()
     async def djclear(self, ctx: commands.Context):
@@ -66,7 +67,7 @@ class DJ(commands.Cog):
         aliases=["lockdj"],
     )
     @commands.cooldown(1, 3, BucketType.guild)
-    @commands.has_permissions(manage_guild=True)
+    @admin_or_owner(manage_guild=True)
     @is_not_blacklisted()
     @maintenance_check()
     async def djlock(self, ctx: commands.Context, command: str):
@@ -104,7 +105,7 @@ class DJ(commands.Cog):
         aliases=["unlockdj"],
     )
     @commands.cooldown(1, 3, BucketType.guild)
-    @commands.has_permissions(manage_guild=True)
+    @admin_or_owner(manage_guild=True)
     @is_not_blacklisted()
     @maintenance_check()
     async def djunlock(self, ctx: commands.Context, command: str):
