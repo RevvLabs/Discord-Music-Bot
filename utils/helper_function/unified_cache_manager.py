@@ -855,6 +855,31 @@ class UnifiedCacheManager:
             if conn:
                 await conn.close()
 
+    async def get_bot_vc_assignments(self, guild_id: int, bot_id: int) -> list:
+        """Return this bot's active temp VC ownerships in a guild as a list of
+        {"voice_channel_id", "text_channel_id"}. Empty list if none / no DB.
+        Uncached — used only on the mention greeting (a rare, per-message event)."""
+        if not self.DATABASE_URL:
+            return []
+        conn = None
+        try:
+            conn = await asyncpg.connect(self.DATABASE_URL)
+            rows = await conn.fetch(
+                "SELECT voice_channel_id, text_channel_id FROM temp_vc_assignments "
+                "WHERE guild_id = $1 AND bot_id = $2",
+                guild_id, bot_id
+            )
+            return [
+                {"voice_channel_id": r["voice_channel_id"], "text_channel_id": r["text_channel_id"]}
+                for r in rows
+            ]
+        except Exception as e:
+            print(f"[ERROR] Failed to read bot vc assignments: {e}")
+            return []
+        finally:
+            if conn:
+                await conn.close()
+
     async def delete_bot_assignments(self, guild_id: int, bot_id: int) -> bool:
         """Release every VC I own in a guild (config cleared / guild left / restart prune)."""
         if not self.DATABASE_URL:

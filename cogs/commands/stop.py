@@ -38,7 +38,9 @@ class Stop(commands.Cog):
 
         # Full reset — clear queue, stop autoplay, restore volume, reset filters
         from utils.helper_function.autoplay_cache import autoplay_cache
+        from cogs.commands.playlist import stop_playlist_session
         autoplay_cache.stop_session(ctx.guild.id)
+        stop_playlist_session(ctx.guild.id)
         player.queue.clear()
         player._autoplay     = voltricx.AutoPlayMode.partial   # autoplay has no setter
         player.filter_name   = "None"

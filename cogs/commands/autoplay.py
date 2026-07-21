@@ -289,8 +289,12 @@ class AutoPlayView(discord.ui.LayoutView):
             ephemeral=True,
         )
 
-        # Stop any existing autoplay session for this guild before starting a new one
+        # Stop any existing autoplay session, and any playlist session (mutually
+        # exclusive — only one thing should be trickling tracks into this guild's
+        # queue at a time), before starting a new one.
         autoplay_cache.stop_session(ctx.guild.id)
+        from cogs.commands.playlist import stop_playlist_session
+        stop_playlist_session(ctx.guild.id)
 
         added = await _queue_cached_tracks(tracks, player, ctx.author, ctx.guild.id)
 

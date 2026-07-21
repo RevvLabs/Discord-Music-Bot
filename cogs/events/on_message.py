@@ -39,6 +39,7 @@ class Mention(commands.Cog):
                 prefix = os.getenv("PREFIX", "-")
 
             setup_info = ""
+            bot_id = self.bot.user.id if self.bot.user else 0
             try:
                 setup_result = await self.get_channels_from_db(message.guild.id)
                 if setup_result:
@@ -50,6 +51,29 @@ class Mention(commands.Cog):
                             f"Text Channel is set to  : {player_channel.mention}\n"
                             f"Voice Channel is set to : {voice_channel.mention}\n\n"
                         )
+                else:
+                    # No permanent setup — surface any active temp VC ownership
+                    # (no-prefix mode) so the user can see where the bot is bound.
+                    temp = await unified_cache.get_bot_vc_assignments(message.guild.id, bot_id)
+                    lines = []
+                    for a in temp:
+                        vc = self.bot.get_channel(a["voice_channel_id"])
+                        tc = self.bot.get_channel(a["text_channel_id"]) if a["text_channel_id"] else None
+                        if vc:
+                            line = f"Temp Voice Channel : {vc.mention}"
+                            if tc:
+                                line += f"  ·  Text : {tc.mention}"
+                            lines.append(line)
+                    if lines:
+                        setup_info = "🔗 **Temporary setup active**\n" + "\n".join(lines) + "\n\n"
+            except Exception:
+                pass
+
+            # DJ role (independent of channel setup — show whenever configured)
+            try:
+                dj_role_id = await unified_cache.get_dj_role(message.guild.id)
+                if dj_role_id and message.guild.get_role(dj_role_id):
+                    setup_info += f"DJ Role is set to : <@&{dj_role_id}>\n\n"
             except Exception:
                 pass
 

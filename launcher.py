@@ -77,6 +77,16 @@ def _parse_owner_ids() -> set:
 
 _OWNER_IDS = _parse_owner_ids()
 
+_DISABLED_VALUES = {"0", "false", "no", "off", "disabled", ""}
+
+
+def _is_enabled_value(val) -> bool:
+    """A bot is enabled unless BOT_ENABLED is explicitly a falsy value.
+    Missing flag → enabled (so existing bots keep running with no config change)."""
+    if val is None:
+        return True
+    return val.strip().lower() not in _DISABLED_VALUES
+
 
 # ========================================================================================
 # BOT FACTORY
@@ -296,14 +306,28 @@ def run_multi_bot_launcher():
         print(f"[MULTI-BOT] Create bots/<name>/.env for each bot.")
         return
 
-    bot_names = sorted([
+    from dotenv import dotenv_values
+
+    candidates = sorted([
         d for d in os.listdir(bots_dir)
         if os.path.isdir(os.path.join(bots_dir, d)) and
            os.path.isfile(os.path.join(bots_dir, d, '.env'))
     ])
 
+    # Filter out bots switched off via BOT_ENABLED in their own .env
+    bot_names, disabled = [], []
+    for d in candidates:
+        vals = dotenv_values(os.path.join(bots_dir, d, '.env'))
+        (bot_names if _is_enabled_value(vals.get("BOT_ENABLED")) else disabled).append(d)
+
+    if disabled:
+        print(f"[MULTI-BOT] Skipping disabled bot(s) (BOT_ENABLED=off): {', '.join(disabled)}")
+
     if not bot_names:
-        print("[MULTI-BOT] No bot directories with .env files found in bots/")
+        if candidates:
+            print("[MULTI-BOT] All bots are disabled via BOT_ENABLED — nothing to start.")
+        else:
+            print("[MULTI-BOT] No bot directories with .env files found in bots/")
         return
 
     print(f"\n[MULTI-BOT] Starting {len(bot_names)} bot(s): {', '.join(bot_names)}\n")
@@ -336,19 +360,30 @@ def run_multi_bot_launcher():
 
 if __name__ == "__main__":
     try:
+        # Per-bot kill switch. When we're about to start ONE specific bot
+        # (direct --bot=X, a cluster worker, or legacy single-bot), honour its
+        # BOT_ENABLED. The multi-bot spawner is NOT gated here — it filters
+        # disabled bots per-.env inside run_multi_bot_launcher() instead, so the
+        # root .env can't switch off the whole fleet by accident.
+        bots_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'bots')
+        _starting_one = bool(_BOT_NAME) or not os.path.isdir(bots_dir)
+
+        if _starting_one and not _is_enabled_value(os.getenv("BOT_ENABLED")):
+            label = _BOT_NAME or "default"
+            print(f"\033[93m[DISABLED]\033[0m Bot '{label}' is off via BOT_ENABLED — not starting.")
+            sys.exit(0)
+
         if _CLUSTER_ID is not None:
             # Worker subprocess with specific shard slice
             asyncio.run(main_worker())
         elif _BOT_NAME:
             # Cluster launcher: fetch topology from Discord, spawn workers or run directly
             asyncio.run(run_cluster_launcher(_BOT_NAME))
+        elif os.path.isdir(bots_dir):
+            run_multi_bot_launcher()
         else:
-            bots_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'bots')
-            if os.path.isdir(bots_dir):
-                run_multi_bot_launcher()
-            else:
-                # Legacy single-bot mode (no bots/ directory)
-                asyncio.run(run_cluster_launcher("default"))
+            # Legacy single-bot mode (no bots/ directory)
+            asyncio.run(run_cluster_launcher("default"))
     except KeyboardInterrupt:
         pass
     except Exception as e:

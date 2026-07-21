@@ -31,8 +31,14 @@ class Clear(commands.Cog):
 
         player: LavaMusic = ctx.guild.voice_client
 
-        if len(player.queue) > 0:
+        from cogs.commands.playlist import stop_playlist_session, has_playlist_session
+        has_pending = has_playlist_session(ctx.guild.id)
+
+        if len(player.queue) > 0 or has_pending:
             player.queue.clear()
+            # Kill the playlist trickle-feed too, else it silently refills the
+            # queue right after the user asked to clear it.
+            stop_playlist_session(ctx.guild.id)
             schedule_delete(await ctx.send(view=clear_design.queue_cleared()))
         else:
             schedule_delete(await ctx.send(view=clear_design.queue_empty()))

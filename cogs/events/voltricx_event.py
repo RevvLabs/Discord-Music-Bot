@@ -168,6 +168,21 @@ class Voltricx_Event(commands.Cog):
                     topup_scheduled = True
         # ─────────────────────────────────────────────────────────────────────
 
+        # ── Playlist smart-queue top-up (mirrors the autoplay block above) ─────
+        # Each pending song carries its own requestor/engine, so this batch may
+        # be a merge of multiple users' "Play All" calls — that's expected.
+        from cogs.commands.playlist import (
+            has_playlist_session, stop_playlist_session, advance_playlist_session, _PLAYLIST_TARGET,
+        )
+        if not topup_scheduled and has_playlist_session(guild_id):
+            needed = _PLAYLIST_TARGET - len(player.queue)
+            if needed > 0:
+                batch = advance_playlist_session(guild_id, needed)
+                if batch:
+                    asyncio.create_task(self._topup_playlist_queue(player, batch))
+                    topup_scheduled = True
+        # ─────────────────────────────────────────────────────────────────────
+
         # Robust check: If no track started but queue is NOT empty, trigger manually.
         if player.current is None and not player.queue.is_empty:
             print(f"\033[93m[WARN] Manual Transition Triggered\033[0m: Queue not empty but current is None in {player.guild.name}.")
@@ -184,8 +199,9 @@ class Voltricx_Event(commands.Cog):
             if topup_scheduled:
                 return
 
-            # Clear any active autoplay session — nothing left to play
+            # Clear any active autoplay / playlist session — nothing left to play
             autoplay_cache.stop_session(player.guild.id)
+            stop_playlist_session(player.guild.id)
 
             # Always reset channel status
             try:
@@ -237,6 +253,49 @@ class Voltricx_Event(commands.Cog):
         # all resolves failed — trigger session-over cleanup manually
         if not player.playing and player.current is None and player.queue.is_empty:
             autoplay_cache.stop_session(player.guild.id)
+            try:
+                await player.channel.edit(status="Ready To Play !")
+            except discord.DiscordException:
+                pass
+            if player in self.player_messages:
+                previous_message_id = self.player_messages.pop(player)
+                if getattr(player, "home", None):
+                    try:
+                        msg = await player.home.fetch_message(previous_message_id)
+                        await msg.delete()
+                    except Exception:
+                        pass
+                    try:
+                        await player.home.send(view=session_design.session_over())
+                    except Exception:
+                        pass
+
+    async def _topup_playlist_queue(self, player: LavaMusic, batch: list) -> None:
+        """Resolve and add a batch of playlist songs to the queue one-by-one (background task).
+        Each entry is (title, author, requestor, engine) — songs may come from different
+        users' merged "Play All" sessions."""
+        from cogs.commands.playlist import _resolve_one, stop_playlist_session
+        for title, author, requestor, engine in batch:
+            try:
+                t = await _resolve_one(f"{title} {author}".strip(), engine)
+                if t:
+                    player.metadata[t] = {"requestor": requestor, "source": t.source}
+                    player.queue.put(t)
+                    # If player went idle while we were resolving, restart it immediately
+                    if not player.playing and not player.queue.is_empty and player.current is None:
+                        try:
+                            next_track = player.queue.get()
+                            await player.play(next_track, replace=False)
+                        except Exception:
+                            pass
+                await asyncio.sleep(0.3)
+            except Exception:
+                continue
+
+        # After the batch: if player is still idle and queue is still empty,
+        # all resolves failed — trigger session-over cleanup manually
+        if not player.playing and player.current is None and player.queue.is_empty:
+            stop_playlist_session(player.guild.id)
             try:
                 await player.channel.edit(status="Ready To Play !")
             except discord.DiscordException:

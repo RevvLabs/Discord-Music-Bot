@@ -143,6 +143,8 @@ class AutoStop(commands.Cog):
                             player.queue.clear()
                             player._autoplay = voltricx.AutoPlayMode.partial
                             autoplay_cache.stop_session(player.guild.id)
+                            from cogs.commands.playlist import stop_playlist_session
+                            stop_playlist_session(player.guild.id)
                             # Release any temp no-prefix VC ownership we held here.
                             try:
                                 await unified_cache.delete_vc_assignment(
@@ -264,6 +266,8 @@ class AutoStop(commands.Cog):
             player: LavaMusic = node.players.get(guild.id)
             if player:
                 autoplay_cache.stop_session(guild.id)
+                from cogs.commands.playlist import stop_playlist_session
+                stop_playlist_session(guild.id)
                 try:
                     await player.disconnect()
                 except Exception:

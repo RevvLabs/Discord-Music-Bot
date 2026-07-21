@@ -33,6 +33,35 @@ def _is_spotify(url: str) -> bool:
 
 _MAX_SONGS = 100
 _PAGE_SIZE = 10
+_PLAYLIST_TARGET = 5  # keep this many tracks queued at all times; rest trickles in as songs finish
+
+# guild_id -> {"remaining": list[(title, author, requestor, engine)]}
+# Songs carry their own requestor/engine so sessions from different users/playlists
+# can be safely merged instead of clobbering each other.
+_playlist_sessions: dict[int, dict] = {}
+
+
+def has_playlist_session(guild_id: int) -> bool:
+    return guild_id in _playlist_sessions
+
+
+def get_playlist_session(guild_id: int) -> dict | None:
+    return _playlist_sessions.get(guild_id)
+
+
+def stop_playlist_session(guild_id: int) -> None:
+    _playlist_sessions.pop(guild_id, None)
+
+
+def advance_playlist_session(guild_id: int, count: int) -> list:
+    """Pop up to `count` songs off the pending queue for top-up. Clears session when exhausted."""
+    session = _playlist_sessions.get(guild_id)
+    if not session:
+        return []
+    batch, session["remaining"] = session["remaining"][:count], session["remaining"][count:]
+    if not session["remaining"]:
+        _playlist_sessions.pop(guild_id, None)
+    return batch
 
 
 def _fmt_song(title: str, author: str) -> str:
@@ -89,48 +118,90 @@ async def _start_playlist_playback(
     player: LavaMusic,
     requestor: discord.Member,
     user_engine: str,
-) -> bool:
+) -> str | None:
     """
-    Resolve the first song and start playback immediately.
-    Queue the rest in a background task.
-    Returns True if playback was started, False if nothing resolved.
+    Cold start (nothing playing, no session running): resolve+play the first
+    track immediately, fill the rest of the initial _PLAYLIST_TARGET batch in
+    the background, register the tail as a session that trickles in one-by-one
+    as tracks end (see on_voltricx_track_end).
+
+    Hot path (something's already playing, or another playlist is already
+    trickling in): don't front-load a new batch — that would burst extra
+    search requests and blow past _PLAYLIST_TARGET. Instead just append this
+    playlist's songs onto the existing/new session tail so it plays out after
+    whatever's already queued, merging cleanly with a concurrent user's "Play
+    All" instead of discarding it.
+
+    Returns "started", "queued", or None if nothing resolved / nothing to do.
     """
-    # Phase 1: find and play the first resolvable track
-    first_idx = 0
-    for i, (_, title, author) in enumerate(songs):
-        t = await _resolve_one(f"{title} {author}".strip(), user_engine)
+    if not songs:
+        return None
+
+    guild_id = player.guild.id
+    tagged = [(title, author, requestor, user_engine) for _, title, author in songs]
+
+    # Claim/merge the session SYNCHRONOUSLY — before any `await` — so a second
+    # concurrent "Play All" always observes this one and merges its songs onto
+    # the tail instead of racing into its own cold start and clobbering us.
+    cold = not player.playing and not has_playlist_session(guild_id)
+    session = _playlist_sessions.setdefault(guild_id, {"remaining": []})
+
+    if not cold:
+        session["remaining"].extend(tagged)
+        return "queued"
+
+    # Cold start: front-load the first batch directly into the queue, park the
+    # rest of the playlist on the session tail (extend, not assign — a racing
+    # caller may already have merged songs here during our awaits below).
+    batch = tagged[:_PLAYLIST_TARGET]
+    session["remaining"].extend(tagged[_PLAYLIST_TARGET:])
+
+    # Phase 1: find and play the first resolvable track in the batch
+    batch_iter = iter(batch)
+    first_queued = False
+    for title, author, req, eng in batch_iter:
+        t = await _resolve_one(f"{title} {author}".strip(), eng)
         if t:
-            player.metadata[t] = {"requestor": requestor, "source": t.source}
+            player.metadata[t] = {"requestor": req, "source": t.source}
             player.queue.put(t)
-            first_idx = i
+            first_queued = True
             break
-    else:
-        return False  # nothing resolved
 
-    if not player.playing:
-        try:
-            next_track = player.queue.get()
-            await player.play(next_track, replace=False)
-        except Exception:
-            pass
+    if not first_queued:
+        # Whole batch unresolvable (backend likely down). Drop the reservation
+        # so it can't wedge a later play_all into permanent "queued" limbo with
+        # nothing playing to drive the top-up.
+        _playlist_sessions.pop(guild_id, None)
+        return None
 
-    # Phase 2: queue the rest in the background
-    remaining = songs[first_idx + 1:]
+    try:
+        next_track = player.queue.get()
+        await player.play(next_track, replace=False)
+    except Exception:
+        pass
 
-    async def _bg_fill():
-        for _, title, author in remaining:
+    # Phase 2: resolve the rest of the initial batch (up to target) in the background
+    rest_of_batch = list(batch_iter)
+
+    async def _bg_fill_batch():
+        for title, author, req, eng in rest_of_batch:
             if not player.check_queue_size():
                 break
-            t = await _resolve_one(f"{title} {author}".strip(), user_engine)
+            t = await _resolve_one(f"{title} {author}".strip(), eng)
             if t:
-                player.metadata[t] = {"requestor": requestor, "source": t.source}
+                player.metadata[t] = {"requestor": req, "source": t.source}
                 player.queue.put(t)
             await asyncio.sleep(0.3)
 
-    if remaining:
-        asyncio.create_task(_bg_fill())
+    if rest_of_batch:
+        asyncio.create_task(_bg_fill_batch())
 
-    return True
+    # Phase 3: if nothing was parked on the tail, drop the empty reservation so
+    # a later play_all cold-starts cleanly instead of appending into limbo.
+    if not session["remaining"]:
+        _playlist_sessions.pop(guild_id, None)
+
+    return "started"
 
 
 # ── Import helper ────────────────────────────────────────────────────────────
@@ -640,17 +711,25 @@ class PlaylistDetailView(discord.ui.LayoutView):
         if not await unified_cache.is_engine_enabled(user_engine):
             user_engine = "ytsearch"
 
-        songs = await unified_cache.get_playlist_songs(self.playlist_id)
-        started = await _start_playlist_playback(songs, player, interaction.user, user_engine)
+        # Mutually exclusive with autoplay — kill any lingering autoplay session
+        # for this guild so it can't reactivate later and inject stale tracks.
+        from utils.helper_function.autoplay_cache import autoplay_cache
+        autoplay_cache.stop_session(interaction.guild.id)
 
-        if not started:
+        songs = await unified_cache.get_playlist_songs(self.playlist_id)
+        outcome = await _start_playlist_playback(songs, player, interaction.user, user_engine)
+
+        if not outcome:
             await interaction.followup.send(view=pl_design.no_songs_to_play(), ephemeral=True)
             return
 
-        remaining = len(songs) - 1
-        msg = f"▶ Started **{self.playlist_name}**!"
-        if remaining > 0:
-            msg += f" Loading **{remaining}** more song(s) in the background…"
+        if outcome == "queued":
+            msg = f"➕ Queued **{self.playlist_name}** ({len(songs)} song(s)) behind current playback."
+        else:
+            remaining = len(songs) - 1
+            msg = f"▶ Started **{self.playlist_name}**!"
+            if remaining > 0:
+                msg += f" Loading **{remaining}** more song(s) in the background…"
         await interaction.followup.send(msg, ephemeral=True)
 
         if bot_logger.enabled:

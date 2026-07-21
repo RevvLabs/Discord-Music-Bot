@@ -472,7 +472,9 @@ class PlayerView(discord.ui.LayoutView):
 
     async def stop_callback(self, interaction: discord.Interaction):
         from utils.helper_function.autoplay_cache import autoplay_cache
+        from cogs.commands.playlist import stop_playlist_session
         autoplay_cache.stop_session(self.player.guild.id)
+        stop_playlist_session(self.player.guild.id)
         self.player.filter_name = "None"
         self.player.filter_status = False
         self.player.filters.reset()
