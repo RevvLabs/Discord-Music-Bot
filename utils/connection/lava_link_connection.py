@@ -80,6 +80,7 @@ async def connect_to_lavalink(self) -> None:
                     region=config.region or "global",
                 )
 
+        nodes = {}
         try:
             with bot_logger.timer() as t:
                 # Pool.connect in 1.0.5 takes client and nodes (Iterable[NodeConfig])

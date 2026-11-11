@@ -54,7 +54,7 @@ async def _resolve_track(td: dict, player: LavaMusic, requestor: discord.Member)
 
     # Re-fetch a fresh URL using the track title — cached YouTube IDs expire.
     if query:
-        search_sources = [user_engine, "ytsearch", "dzsearch"]
+        search_sources = [user_engine, "ytsearch", "dzsearch", "ytmsearch", "spsearch", "jssearch", "scsearch", "amsearch", "ytdl"]
         seen = set()
         unique_sources = [s for s in search_sources if not (s in seen or seen.add(s))]
         for source in unique_sources:

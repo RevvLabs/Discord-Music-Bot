@@ -50,6 +50,12 @@ def no_songs_to_play() -> discord.ui.LayoutView:
     return build_basic_layout(description="This playlist has no songs yet. Add some songs first!")
 
 
+def resolve_failed() -> discord.ui.LayoutView:
+    return build_basic_layout(
+        description="Unable to load or play any songs from this playlist. Please check that the music node is online and try again."
+    )
+
+
 def voice_required() -> discord.ui.LayoutView:
     return build_basic_layout(description="You need to be in a voice channel to play a playlist.")
 

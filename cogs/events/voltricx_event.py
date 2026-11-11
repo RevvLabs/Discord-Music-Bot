@@ -277,7 +277,10 @@ class Voltricx_Event(commands.Cog):
         from cogs.commands.playlist import _resolve_one, stop_playlist_session
         for title, author, requestor, engine in batch:
             try:
-                t = await _resolve_one(f"{title} {author}".strip(), engine)
+                q = f"{title} {author}".strip() if author else title.strip()
+                t = await _resolve_one(q, engine)
+                if not t and author:
+                    t = await _resolve_one(title.strip(), engine)
                 if t:
                     player.metadata[t] = {"requestor": requestor, "source": t.source}
                     player.queue.put(t)

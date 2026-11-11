@@ -74,7 +74,10 @@ def _fmt_song(title: str, author: str) -> str:
 
 async def _ensure_voice(ctx: commands.Context, interaction: discord.Interaction = None) -> "LavaMusic | None":
     """Join or validate voice for playback. Returns player or None on failure."""
-    send = interaction.followup.send if interaction else ctx.send
+    if interaction:
+        send = interaction.followup.send if interaction.response.is_done() else interaction.response.send_message
+    else:
+        send = ctx.send
     user = interaction.user if interaction else ctx.author
     guild = interaction.guild if interaction else ctx.guild
 
@@ -102,12 +105,18 @@ async def _ensure_voice(ctx: commands.Context, interaction: discord.Interaction 
 
 async def _resolve_one(query: str, user_engine: str):
     """Search for a single track across sources. Returns track or None."""
-    for source in [user_engine, "ytsearch", "dzsearch"]:
+    search_sources = [user_engine, "ytsearch", "dzsearch", "ytmsearch", "spsearch", "jssearch", "scsearch", "amsearch", "ytdl"]
+    seen = set()
+    unique_sources = [s for s in search_sources if not (s in seen or seen.add(s))]
+
+    for source in unique_sources:
         try:
             async with LAVALINK_SEARCH_SEM:
                 results = await voltricx.Playable.search(query, source=source)
             if results:
-                return results.tracks[0] if isinstance(results, voltricx.Playlist) else results[0]
+                track = results.tracks[0] if isinstance(results, voltricx.Playlist) else results[0]
+                if track:
+                    return track
         except Exception:
             continue
     return None
@@ -150,25 +159,23 @@ async def _start_playlist_playback(
         session["remaining"].extend(tagged)
         return "queued"
 
-    # Cold start: front-load the first batch directly into the queue, park the
-    # rest of the playlist on the session tail (extend, not assign — a racing
-    # caller may already have merged songs here during our awaits below).
-    batch = tagged[:_PLAYLIST_TARGET]
-    session["remaining"].extend(tagged[_PLAYLIST_TARGET:])
-
-    # Phase 1: find and play the first resolvable track in the batch
-    batch_iter = iter(batch)
-    first_queued = False
-    for title, author, req, eng in batch_iter:
-        t = await _resolve_one(f"{title} {author}".strip(), eng)
+    # Cold start: find and play the first resolvable track across the playlist
+    resolved_track = None
+    resolved_index = -1
+    for i, (title, author, req, eng) in enumerate(tagged):
+        q = f"{title} {author}".strip() if author else title.strip()
+        t = await _resolve_one(q, eng)
+        if not t and author:
+            t = await _resolve_one(title.strip(), eng)
         if t:
+            resolved_track = t
+            resolved_index = i
             player.metadata[t] = {"requestor": req, "source": t.source}
             player.queue.put(t)
-            first_queued = True
             break
 
-    if not first_queued:
-        # Whole batch unresolvable (backend likely down). Drop the reservation
+    if not resolved_track:
+        # Whole playlist unresolvable (backend likely down). Drop the reservation
         # so it can't wedge a later play_all into permanent "queued" limbo with
         # nothing playing to drive the top-up.
         _playlist_sessions.pop(guild_id, None)
@@ -181,13 +188,17 @@ async def _start_playlist_playback(
         pass
 
     # Phase 2: resolve the rest of the initial batch (up to target) in the background
-    rest_of_batch = list(batch_iter)
+    rest_of_batch = tagged[resolved_index + 1 : resolved_index + _PLAYLIST_TARGET]
+    session["remaining"].extend(tagged[resolved_index + _PLAYLIST_TARGET :])
 
     async def _bg_fill_batch():
         for title, author, req, eng in rest_of_batch:
-            if not player.check_queue_size():
+            if hasattr(player, "check_queue_size") and not player.check_queue_size():
                 break
-            t = await _resolve_one(f"{title} {author}".strip(), eng)
+            q = f"{title} {author}".strip() if author else title.strip()
+            t = await _resolve_one(q, eng)
+            if not t and author:
+                t = await _resolve_one(title.strip(), eng)
             if t:
                 player.metadata[t] = {"requestor": req, "source": t.source}
                 player.queue.put(t)
@@ -716,11 +727,15 @@ class PlaylistDetailView(discord.ui.LayoutView):
         from utils.helper_function.autoplay_cache import autoplay_cache
         autoplay_cache.stop_session(interaction.guild.id)
 
-        songs = await unified_cache.get_playlist_songs(self.playlist_id)
+        songs = self.songs or await unified_cache.get_playlist_songs(self.playlist_id)
+        if not songs:
+            await interaction.followup.send(view=pl_design.no_songs_to_play(), ephemeral=True)
+            return
+
         outcome = await _start_playlist_playback(songs, player, interaction.user, user_engine)
 
         if not outcome:
-            await interaction.followup.send(view=pl_design.no_songs_to_play(), ephemeral=True)
+            await interaction.followup.send(view=pl_design.resolve_failed(), ephemeral=True)
             return
 
         if outcome == "queued":
