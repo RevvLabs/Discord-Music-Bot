@@ -175,3 +175,95 @@ backups
 *.rar
 # Lavalink server config contains credentials - ship the .example instead
 application.yml
+*.zip
+
+# Local secrets and machine-specific configuration
+.env.*
+!.env.example
+*.secret
+*.secrets
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Runtime data and generated state
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.session
+*.pid
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.swp
+*.swo
+*.dump
+*.cache
+*.pickle
+*.pkl
+*.csv
+*.tsv
+json_Data/
+data/
+state/
+tmp/
+temp/
+runtime/
+sessions/
+downloads/
+media/
+
+# Local tooling and generated project metadata
+.claude/settings.local.json
+.claude/repo-knowledge/
+.history/
+.idea/
+.fleet/
+.project
+.classpath
+.settings/
+
+# Operating-system metadata
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Build, coverage, and test output
+.coverage/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+htmlcov/
+.tox/
+.nox/
+coverage/
+pytestdebug.log
+
+# Generated archives and media exports
+*.7z
+*.tar
+*.tar.gz
+*.gz
+*.bz2
+*.xz
+*.mp3
+*.wav
+*.flac
+*.mp4
+*.webm
+*.gif
+
+# Local-only project files and generated assets
+.claude/
+assets/
+app.yml
+clean.py
+ship.py
+svg_to_gif.py
+svg_to_png.py
