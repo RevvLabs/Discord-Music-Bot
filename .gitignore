@@ -265,5 +265,6 @@ assets/
 app.yml
 clean.py
 ship.py
+recolor_logo.py
 svg_to_gif.py
 svg_to_png.py
