@@ -211,8 +211,8 @@ class Voltricx_Event(commands.Cog):
                 pass
 
             # Only clean up if inactive_player hasn't already done it (pop acts as a once-flag)
-            if player in self.player_messages:
-                previous_message_id = self.player_messages.pop(player)
+            previous_message_id = self.player_messages.pop(player, None)
+            if previous_message_id is not None:
                 try:
                     previous_message = await player.home.fetch_message(previous_message_id)
                     await previous_message.delete()
@@ -222,10 +222,10 @@ class Voltricx_Event(commands.Cog):
                     print(f"Permission error: Bot can't delete the previous message in {player.home.name}")
                 except Exception as e:
                     print(f"An error occurred while deleting the previous message: {e}")
-                try:
-                    await player.home.send(view=session_design.session_over())
-                except Exception:
-                    pass
+            try:
+                await player.home.send(view=session_design.session_over())
+            except Exception:
+                pass
 
     async def is_247_enabled(self, guild_id):
         bot_id = self.bot.user.id if self.bot.user else 0
@@ -257,18 +257,18 @@ class Voltricx_Event(commands.Cog):
                 await player.channel.edit(status="Ready To Play !")
             except discord.DiscordException:
                 pass
-            if player in self.player_messages:
-                previous_message_id = self.player_messages.pop(player)
-                if getattr(player, "home", None):
-                    try:
-                        msg = await player.home.fetch_message(previous_message_id)
-                        await msg.delete()
-                    except Exception:
-                        pass
-                    try:
-                        await player.home.send(view=session_design.session_over())
-                    except Exception:
-                        pass
+            previous_message_id = self.player_messages.pop(player, None)
+            if previous_message_id is not None and getattr(player, "home", None):
+                try:
+                    msg = await player.home.fetch_message(previous_message_id)
+                    await msg.delete()
+                except Exception:
+                    pass
+            if getattr(player, "home", None):
+                try:
+                    await player.home.send(view=session_design.session_over())
+                except Exception:
+                    pass
 
     async def _topup_playlist_queue(self, player: LavaMusic, batch: list) -> None:
         """Resolve and add a batch of playlist songs to the queue one-by-one (background task).
@@ -303,18 +303,18 @@ class Voltricx_Event(commands.Cog):
                 await player.channel.edit(status="Ready To Play !")
             except discord.DiscordException:
                 pass
-            if player in self.player_messages:
-                previous_message_id = self.player_messages.pop(player)
-                if getattr(player, "home", None):
-                    try:
-                        msg = await player.home.fetch_message(previous_message_id)
-                        await msg.delete()
-                    except Exception:
-                        pass
-                    try:
-                        await player.home.send(view=session_design.session_over())
-                    except Exception:
-                        pass
+            previous_message_id = self.player_messages.pop(player, None)
+            if previous_message_id is not None and getattr(player, "home", None):
+                try:
+                    msg = await player.home.fetch_message(previous_message_id)
+                    await msg.delete()
+                except Exception:
+                    pass
+            if getattr(player, "home", None):
+                try:
+                    await player.home.send(view=session_design.session_over())
+                except Exception:
+                    pass
                 
                 
     @commands.Cog.listener()
@@ -345,18 +345,18 @@ class Voltricx_Event(commands.Cog):
             pass
 
         # Delete player card and send session over (pop acts as a once-flag vs on_voltricx_track_end)
-        if player in self.player_messages:
-            previous_message_id = self.player_messages.pop(player)
-            if hasattr(player, 'home') and player.home:
-                try:
-                    previous_message = await player.home.fetch_message(previous_message_id)
-                    await previous_message.delete()
-                except (discord.NotFound, discord.Forbidden, Exception):
-                    pass
-                try:
-                    await player.home.send(view=session_design.session_over())
-                except Exception:
-                    pass
+        previous_message_id = self.player_messages.pop(player, None)
+        if previous_message_id is not None and hasattr(player, 'home') and player.home:
+            try:
+                previous_message = await player.home.fetch_message(previous_message_id)
+                await previous_message.delete()
+            except (discord.NotFound, discord.Forbidden, Exception):
+                pass
+        if hasattr(player, 'home') and player.home:
+            try:
+                await player.home.send(view=session_design.session_over())
+            except Exception:
+                pass
 
         if await self.is_247_enabled(guild_id):
             return

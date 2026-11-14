@@ -107,7 +107,7 @@ class SettingsFilterSelect(discord.ui.Select):
             self.player.filter_status = True
 
         await self.player.set_filters(filters)
-        await self.settings_view._refresh(interaction)
+        await self.settings_view._refresh_panel(interaction)
 
 
 class SettingsView(discord.ui.LayoutView):
@@ -244,7 +244,7 @@ class SettingsView(discord.ui.LayoutView):
 
     # ── shared refresh helper ─────────────────────────────────────────────────
 
-    async def _refresh(self, interaction: discord.Interaction):
+    async def _refresh_panel(self, interaction: discord.Interaction):
         """Rebuild settings panel in place."""
         self._build_ui()
         await interaction.response.edit_message(view=self)
@@ -253,15 +253,15 @@ class SettingsView(discord.ui.LayoutView):
 
     async def _loop_normal_callback(self, interaction: discord.Interaction):
         self.player.queue.mode = voltricx.QueueMode.normal
-        await self._refresh(interaction)
+        await self._refresh_panel(interaction)
 
     async def _loop_track_callback(self, interaction: discord.Interaction):
         self.player.queue.mode = voltricx.QueueMode.loop
-        await self._refresh(interaction)
+        await self._refresh_panel(interaction)
 
     async def _loop_queue_callback(self, interaction: discord.Interaction):
         self.player.queue.mode = voltricx.QueueMode.loop_all
-        await self._refresh(interaction)
+        await self._refresh_panel(interaction)
 
     # ── autoplay / shuffle callbacks ──────────────────────────────────────────
 
@@ -270,7 +270,7 @@ class SettingsView(discord.ui.LayoutView):
             self.player._autoplay = voltricx.AutoPlayMode.partial
         else:
             self.player._autoplay = voltricx.AutoPlayMode.enabled
-        await self._refresh(interaction)
+        await self._refresh_panel(interaction)
 
     async def _shuffle_callback(self, interaction: discord.Interaction):
         allowed, role_id = await dj_check_member(interaction.user, interaction.guild)
@@ -281,7 +281,7 @@ class SettingsView(discord.ui.LayoutView):
             )
             return
         self.player.queue.shuffle()
-        await self._refresh(interaction)
+        await self._refresh_panel(interaction)
 
     # ── volume callbacks ──────────────────────────────────────────────────────
 
@@ -289,12 +289,12 @@ class SettingsView(discord.ui.LayoutView):
         new_vol = max(1, min(100, self.player.volume + change))
         await self.player.set_volume(new_vol)
         self.main_view.current_vol = new_vol
-        await self._refresh(interaction)
+        await self._refresh_panel(interaction)
 
     async def _vol_reset(self, interaction: discord.Interaction):
         await self.player.set_volume(50)
         self.main_view.current_vol = 50
-        await self._refresh(interaction)
+        await self._refresh_panel(interaction)
 
 
 class PlayerView(discord.ui.LayoutView):
