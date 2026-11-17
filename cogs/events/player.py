@@ -123,7 +123,7 @@ class SettingsView(discord.ui.LayoutView):
     │  Vol · Queue · Loop · AutoPlay · Filter                    │
     │  ────────────────────────────────────────────────────────  │
     │  🔁 Loop Mode                                              │
-    │  [ Normal ]  [ Loop Track ]  [ Loop Queue ]                │
+    │  [ Off ]  [ Loop Track ]  [ Loop Queue ]                   │
     │                                                            │
     │  ▶ AutoPlay  ·  🔀 Queue                                  │
     │  [ AutoPlay: On/Off ]  [ 🔀 Shuffle Queue ]               │
@@ -148,7 +148,7 @@ class SettingsView(discord.ui.LayoutView):
     def _setup_components(self):
         # --- Loop mode row ---
         self.loop_row = discord.ui.ActionRow()
-        self.loop_normal_btn = Button(label="Normal",     style=discord.ButtonStyle.secondary)
+        self.loop_normal_btn = Button(label="Off",        style=discord.ButtonStyle.secondary)
         self.loop_track_btn  = Button(label="Loop Track", style=discord.ButtonStyle.secondary)
         self.loop_queue_btn  = Button(label="Loop Queue", style=discord.ButtonStyle.secondary)
         self.loop_normal_btn.callback = self._loop_normal_callback
@@ -161,7 +161,7 @@ class SettingsView(discord.ui.LayoutView):
         # --- AutoPlay + Shuffle row ---
         self.misc_row = discord.ui.ActionRow()
         self.autoplay_btn = Button(label="AutoPlay: Off", style=discord.ButtonStyle.secondary)
-        self.shuffle_btn  = Button(label="🔀 Shuffle Queue", style=discord.ButtonStyle.primary)
+        self.shuffle_btn  = Button(label="🔀 Shuffle Queue", style=discord.ButtonStyle.secondary)
         self.autoplay_btn.callback = self._autoplay_callback
         self.shuffle_btn.callback  = self._shuffle_callback
         self.misc_row.add_item(self.autoplay_btn)
