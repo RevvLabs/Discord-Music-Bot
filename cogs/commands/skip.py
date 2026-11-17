@@ -106,7 +106,7 @@ class Skip(commands.Cog):
             print(f"\033[91m[ERROR] Vote Skip General Error\033[0m: {e}")
             return False
 
-    @commands.hybrid_command(name="skip", description="Skip the currently playing track.")
+    @commands.hybrid_command(name="skip", description="Skip the currently playing track.", aliases=["n", "next"])
     @commands.cooldown(1, 3, BucketType.user)
     @is_not_blacklisted()
     @maintenance_check()

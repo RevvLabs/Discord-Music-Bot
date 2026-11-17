@@ -27,7 +27,7 @@ class SetChannels(commands.Cog):
     async def set_channels_in_db(self, guild_id, bot_id, player_channel_id, voice_channel_id):
         await unified_cache.set_channel_set_data(guild_id, bot_id, player_channel_id, voice_channel_id)
 
-    @commands.hybrid_command(name="setup", description="Set the player and voice channels for the guild.")
+    @commands.hybrid_command(name="setup", description="Set the player and voice channels for the guild.", aliases=["chset", "setchannel"])
     @commands.cooldown(1, 5, BucketType.user)
     @admin_or_owner()
     @is_not_blacklisted()
@@ -40,7 +40,7 @@ class SetChannels(commands.Cog):
         await self.set_channels_in_db(ctx.guild.id, bot_id, text_channel.id, voice_channel.id)
         schedule_delete(await ctx.send(view=cs_design.setup_done(text_channel.mention, voice_channel.mention)))
 
-    @commands.hybrid_command(name="clearsetup", description="Clear the player and voice channel setup for the guild.")
+    @commands.hybrid_command(name="clearsetup", description="Clear the player and voice channel setup for the guild.", aliases=["csetup", "resetsetup"])
     @commands.cooldown(1, 5, BucketType.user)
     @admin_or_owner()
     @is_not_blacklisted()
@@ -49,7 +49,7 @@ class SetChannels(commands.Cog):
         await unified_cache.delete_channel_set_data(ctx.guild.id, self.bot.user.id)
         schedule_delete(await ctx.send(view=cs_design.setup_cleared()))
 
-    @commands.hybrid_command(name="getsetup", description="Get the player and voice channels for the guild.")
+    @commands.hybrid_command(name="getsetup", description="Get the player and voice channels for the guild.", aliases=["gsetup", "showsetup"])
     @commands.cooldown(1, 5, BucketType.user)
     @admin_or_owner()
     @is_not_blacklisted()

@@ -96,50 +96,50 @@ class Filters(commands.Cog):
         await player.set_filters(filters)
         schedule_delete(await ctx.send(view=view))
 
-    @commands.hybrid_command(name="bassboost", description="Toggle the Bass Boost filter.")
+    @commands.hybrid_command(name="bassboost", description="Toggle the Bass Boost filter.", aliases=["bb", "bass"])
     @commands.cooldown(1, 3, BucketType.user)
     @is_not_blacklisted()
     @maintenance_check()
     async def bass_boost(self, ctx):
         await self.toggle_filter(ctx, "bass_boost")
 
-    @commands.hybrid_command(name="nightcore", description="Toggle the Nightcore filter.")
+    @commands.hybrid_command(name="nightcore", description="Toggle the Nightcore filter.", aliases=["nc"])
     @commands.cooldown(1, 3, BucketType.user)
     @is_not_blacklisted()
     async def nightcore(self, ctx):
         await self.toggle_filter(ctx, "nightcore")
 
-    @commands.hybrid_command(name="vaporwave", description="Toggle the Vaporwave filter.")
+    @commands.hybrid_command(name="vaporwave", description="Toggle the Vaporwave filter.", aliases=["vw", "vapor"])
     @commands.cooldown(1, 3, BucketType.user)
     @is_not_blacklisted()
     async def vaporwave(self, ctx):
         await self.toggle_filter(ctx, "vaporwave")
 
-    @commands.hybrid_command(name="karaoke", description="Toggle the Karaoke filter.")
+    @commands.hybrid_command(name="karaoke", description="Toggle the Karaoke filter.", aliases=["kk", "kara"])
     @commands.cooldown(1, 3, BucketType.user)
     @is_not_blacklisted()
     async def karaoke(self, ctx):
         await self.toggle_filter(ctx, "karaoke")
 
-    @commands.hybrid_command(name="8d", description="Toggle the 8D Audio filter.")
+    @commands.hybrid_command(name="8d", description="Toggle the 8D Audio filter.", aliases=["8daudio", "eightd"])
     @commands.cooldown(1, 3, BucketType.user)
     @is_not_blacklisted()
     async def eight_d_audio(self, ctx):
         await self.toggle_filter(ctx, "8d_audio")
 
-    @commands.hybrid_command(name="chipmunk", description="Toggle the Chipmunk filter.")
+    @commands.hybrid_command(name="chipmunk", description="Toggle the Chipmunk filter.", aliases=["cm", "chip"])
     @commands.cooldown(1, 3, BucketType.user)
     @is_not_blacklisted()
     async def chipmunk(self, ctx):
         await self.toggle_filter(ctx, "chipmunk")
 
-    @commands.hybrid_command(name="deepvoice", description="Toggle the Deep Voice filter.")
+    @commands.hybrid_command(name="deepvoice", description="Toggle the Deep Voice filter.", aliases=["dv", "deepv"])
     @commands.cooldown(1, 3, BucketType.user)
     @is_not_blacklisted()
     async def deep_voice(self, ctx):
         await self.toggle_filter(ctx, "deep_voice")
 
-    @commands.hybrid_command(name="reset", description="Reset all filters.")
+    @commands.hybrid_command(name="reset", description="Reset all filters.", aliases=["rf", "resetfilters", "clearfilters"])
     @commands.cooldown(1, 3, BucketType.user)
     @is_not_blacklisted()
     async def reset_filters(self, ctx):

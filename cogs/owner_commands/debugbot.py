@@ -20,6 +20,7 @@ class DebugBot(commands.Cog):
     @commands.hybrid_command(
         name="debugbot",
         description="Toggle detailed voltricx debug logging on or off.",
+        aliases=["debug", "dbg"],
     )
     async def debugbot(self, ctx: commands.Context) -> None:
         if ctx.author.id not in BOT_OWNER_IDS:

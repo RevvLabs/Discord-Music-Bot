@@ -311,7 +311,7 @@ class Lyrics(commands.Cog):
             self._cache.pop(next(iter(self._cache)), None)
         self._cache[key] = (text, title, time.monotonic() + _CACHE_TTL)
 
-    @commands.hybrid_command(name="lyrics", description="Show lyrics for the current song or a search query.")
+    @commands.hybrid_command(name="lyrics", description="Show lyrics for the current song or a search query.", aliases=["ly", "lyric"])
     @commands.cooldown(1, 5, BucketType.user)
     @is_not_blacklisted()
     @maintenance_check()

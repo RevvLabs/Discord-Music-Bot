@@ -17,14 +17,14 @@ class CacheManager(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.group(name="cache", description="Manage and inspect the voltricx HyperCache.", invoke_without_command=True)
+    @commands.group(name="cache", description="Manage and inspect the voltricx HyperCache.", invoke_without_command=True, case_insensitive=True, aliases=["hc", "hypercache"])
     async def cache(self, ctx: commands.Context):
         if ctx.author.id not in BOT_OWNER_IDS:
             return await ctx.send(view=owner_design.permission_denied(), ephemeral=True)
         
         await ctx.send_help(ctx.command)
 
-    @cache.command(name="stats", description="Show HyperCache statistics.")
+    @cache.command(name="stats", description="Show HyperCache statistics.", aliases=["s"])
     async def stats(self, ctx: commands.Context):
         if ctx.author.id not in BOT_OWNER_IDS:
             return
@@ -33,7 +33,7 @@ class CacheManager(commands.Cog):
         
         await ctx.send(view=owner_design.cache_stats(stats['l1_queries'], stats['l2_tracks']))
 
-    @cache.command(name="export", description="Export full cache data to a file at the root.")
+    @cache.command(name="export", description="Export full cache data to a file at the root.", aliases=["exp"])
     async def export(self, ctx: commands.Context):
         if ctx.author.id not in BOT_OWNER_IDS:
             return
@@ -62,7 +62,7 @@ class CacheManager(commands.Cog):
             
         await ctx.send(view=owner_design.cache_exported(file_path), file=discord.File(file_path))
 
-    @cache.command(name="cacheclear", description="Clear all cache data.")
+    @cache.command(name="cacheclear", description="Clear all cache data.", aliases=["clear", "cc"])
     async def clear(self, ctx: commands.Context):
         if ctx.author.id not in BOT_OWNER_IDS:
             return

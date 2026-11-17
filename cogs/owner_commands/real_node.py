@@ -36,7 +36,7 @@ class LavalinkNodeInfo(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="realnode", description="Display detailed information about Lavalink nodes.")
+    @commands.hybrid_command(name="realnode", description="Display detailed information about Lavalink nodes.", aliases=["rn", "rnode"])
     async def node(self, ctx: commands.Context):
         if ctx.author.id not in BOT_OWNER_IDS:
             return await ctx.send(view=owner_design.permission_denied())

@@ -21,7 +21,7 @@ class MaintenanceControl(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="lock", description="Lock a command for maintenance. (Bot owner only)")
+    @commands.hybrid_command(name="lock", description="Lock a command for maintenance. (Bot owner only)", aliases=["mlock", "maintlock"])
     @commands.cooldown(1, 2, BucketType.user)
     @is_bot_owner()
     async def lock(self, ctx: commands.Context, command_name: str, *, reason: str = ""):
@@ -39,7 +39,7 @@ class MaintenanceControl(commands.Cog):
         else:
             await ctx.send(view=maint_design.command_lock_failed(command_name), ephemeral=True)
 
-    @commands.hybrid_command(name="unlock", description="Unlock a command from maintenance. (Bot owner only)")
+    @commands.hybrid_command(name="unlock", description="Unlock a command from maintenance. (Bot owner only)", aliases=["munlock", "maintunlock"])
     @commands.cooldown(1, 2, BucketType.user)
     @is_bot_owner()
     async def unlock(self, ctx: commands.Context, command_name: str):
@@ -53,7 +53,7 @@ class MaintenanceControl(commands.Cog):
         else:
             await ctx.send(view=maint_design.command_unlock_failed(command_name), ephemeral=True)
 
-    @commands.hybrid_command(name="locked", description="List all commands locked for maintenance. (Bot owner only)")
+    @commands.hybrid_command(name="locked", description="List all commands locked for maintenance. (Bot owner only)", aliases=["mlocked", "locks"])
     @commands.cooldown(1, 3, BucketType.user)
     @is_bot_owner()
     async def locked(self, ctx: commands.Context):

@@ -17,7 +17,7 @@ class Ping(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="ping", description="Displays the bot, API, and database latencies.")
+    @commands.hybrid_command(name="ping", description="Displays the bot, API, and database latencies.", aliases=["pg", "latency"])
     @commands.cooldown(1, 3, BucketType.user)
     @is_not_blacklisted()
     @maintenance_check()

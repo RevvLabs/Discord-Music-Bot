@@ -25,7 +25,6 @@ COMMAND_INFO = {
         "description": "`Play all your favorite songs.`",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` fav `", "` f `"],
         "usage": "`-favorite`",
         "examples": [
             " -favorite",
@@ -37,7 +36,6 @@ COMMAND_INFO = {
         "description": "`Fix the Player.`",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` fx `", "` fix `"],
         "usage": "`-fix`",
         "examples": [
             " -fix",
@@ -49,7 +47,6 @@ COMMAND_INFO = {
         "description": "`Save the currently playing song to your favorites.`",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` sf `", "` like `", "` save `", "` addfav `", "` af `", "` add `"],
         "usage": "`-savefav`",
         "examples": [
             " -savefav",
@@ -65,7 +62,6 @@ COMMAND_INFO = {
         "description": "` Joins the voice channel `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` j `"],
         "usage": "`-join`",
         "examples": [
             " -join",
@@ -76,7 +72,6 @@ COMMAND_INFO = {
         "description": "` Plays a song `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` p `"],
         "usage": "`-play <song>`",
         "examples": [
             " -play example",
@@ -88,7 +83,6 @@ COMMAND_INFO = {
         "description": "`Dedicates and Plays a song to a mentioned user`",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` d `"],
         "usage": "`-dedicate @user <song>`",
         "examples": [
             " -dedicate @user example",
@@ -100,7 +94,6 @@ COMMAND_INFO = {
         "description": "` Auto Plays toggle on or off `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` auto `"],
         "usage": "` -autoplay `",
         "examples": [
             " -autoplay ",
@@ -112,7 +105,6 @@ COMMAND_INFO = {
         "description": "` Pauses the current song `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` ps `"],
         "usage": "`-pause`",
         "examples": [
             " -pause",
@@ -123,7 +115,6 @@ COMMAND_INFO = {
         "description": "` Resumes the paused song `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` res `"],
         "usage": "`-resume`",
         "examples": [
             " -resume",
@@ -134,7 +125,6 @@ COMMAND_INFO = {
         "description": "` Skips the current song `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "`-skip`",
         "examples": [
             " -skip"
@@ -144,7 +134,6 @@ COMMAND_INFO = {
         "description": "` Goes to the previous song in the queue `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` prev `"],
         "usage": "`-previous`",
         "examples": [
             " -previous",
@@ -155,7 +144,6 @@ COMMAND_INFO = {
         "description": "` Displays the current song queue `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` q `"],
         "usage": "`-queue`",
         "examples": [
             " -queue",
@@ -166,7 +154,6 @@ COMMAND_INFO = {
         "description": "` Displays the current song playing `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` np `"],
         "usage": "`-nowplaying`",
         "examples": [
             " -nowplaying",
@@ -177,7 +164,6 @@ COMMAND_INFO = {
         "description": "` Removes a song from the queue `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` rm `"],
         "usage": "`-remove <song_number>`",
         "examples": [
             " -remove 3",
@@ -188,7 +174,6 @@ COMMAND_INFO = {
         "description": "` Clears the entire song queue `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` cq `"],
         "usage": "`-clearqueue`",
         "examples": [
             " -clearqueue",
@@ -199,7 +184,6 @@ COMMAND_INFO = {
         "description": "` Shuffles the song queue `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` sh `"],
         "usage": "`-shuffle`",
         "examples": [
             " -shuffle",
@@ -210,7 +194,6 @@ COMMAND_INFO = {
         "description": "` Replays the current song `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` rp `"],
         "usage": "`-replay`",
         "examples": [
             " -replay",
@@ -221,7 +204,6 @@ COMMAND_INFO = {
         "description": "` Stops the current song and clears the queue `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` st `"],
         "usage": "`-stop`",
         "examples": [
             " -stop",
@@ -232,7 +214,6 @@ COMMAND_INFO = {
         "description": "` Disconnects the bot from the voice channel `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` dc `"],
         "usage": "`-disconnect`",
         "examples": [
             " -disconnect",
@@ -243,7 +224,6 @@ COMMAND_INFO = {
         "description": "` Loops the current song `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` lp `"],
         "usage": "`-loop`",
         "examples": [
             " -loop",
@@ -254,7 +234,6 @@ COMMAND_INFO = {
         "description": "` Searches for a song `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` s `"],
         "usage": "`-search <song_name>`",
         "examples": [
             " -search example",
@@ -265,7 +244,6 @@ COMMAND_INFO = {
         "description": "` Seeks to a specific time in the song `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` sk `"],
         "usage": "`-seek <time>`",
         "examples": [
             " -seek 1:30",
@@ -277,7 +255,6 @@ COMMAND_INFO = {
         "description": "` Adjusts the bot's volume `",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` v `"],
         "usage": "`-volume <level>`",
         "examples": [
             " -volume 50",
@@ -289,7 +266,6 @@ COMMAND_INFO = {
         "description": "` Applies an Bass Boost audio filter `",
         "category": "` Filters `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "`-bassboost`",
         "examples": [
             " -bassboost"
@@ -299,7 +275,6 @@ COMMAND_INFO = {
         "description": "` Applies a chipmunk voice filter `",
         "category": "` Filters `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "`-chipmunk`",
         "examples": [
             " -chipmunk"
@@ -309,7 +284,6 @@ COMMAND_INFO = {
         "description": "` Applies a karaoke voice filter `",
         "category": "` Filters `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "`-karaoke`",
         "examples": [
             " -karaoke"
@@ -319,7 +293,6 @@ COMMAND_INFO = {
         "description": "` Applies a deep voice filter `",
         "category": "` Filters `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "`-deepvoice`",
         "examples": [
             " -deepvoice"
@@ -329,7 +302,6 @@ COMMAND_INFO = {
         "description": "` Applies a nightcore filter `",
         "category": "` Filters `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "`-nightcore`",
         "examples": [
             " -nightcore"
@@ -339,7 +311,6 @@ COMMAND_INFO = {
         "description": "` Applies a tremolo audio effect `",
         "category": "` Filters `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "`-tremolo`",
         "examples": [
             " -tremolo"
@@ -349,7 +320,6 @@ COMMAND_INFO = {
         "description": "` Applies a vaporwave filter `",
         "category": "` Filters `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "`-vaporwave`",
         "examples": [
             " -vaporwave"
@@ -359,7 +329,6 @@ COMMAND_INFO = {
         "description": "` Resets all applied filters `",
         "category": "` Filters `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "`-reset`",
         "examples": [
             " -reset"
@@ -370,7 +339,6 @@ COMMAND_INFO = {
         "description": "` Checks the bot's latency `",
         "category": "` Info `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "`-ping`",
         "examples": [
             " -ping"
@@ -380,7 +348,6 @@ COMMAND_INFO = {
         "description": "` Display's Leader board `",
         "category": "` Info `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` l `","` lb `"],
         "usage": "`-leaderboard`",
         "examples": [
             " -leaderboard",
@@ -392,7 +359,6 @@ COMMAND_INFO = {
         "description": "` Display's your music profile card `",
         "category": "` Info `",
         "cooldown": "` 5 second(s) `",
-        "aliases": [],
         "usage": "`-profile [@user]`",
         "examples": [
             " -profile",
@@ -403,7 +369,6 @@ COMMAND_INFO = {
         "description": "` Displays the bot's current statistics `",
         "category": "` Info `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` sts `"],
         "usage": "`-stats`",
         "examples": [
             " -stats"
@@ -416,7 +381,6 @@ COMMAND_INFO = {
         "description": "` Choose your search engine.`",
         "category": "` Config `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` eng `"],
         "usage": "` -engine `",
         "examples": [
             " -engine ",
@@ -427,7 +391,6 @@ COMMAND_INFO = {
         "description": "` Toggle the visibility of the music control buttons.`",
         "category": "` Config `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` btn `"],
         "usage": "` -button `",
         "examples": [
             " -button ",
@@ -438,7 +401,6 @@ COMMAND_INFO = {
         "description": "` setup channels for bot `",
         "category": "` Config `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "` -setup <text_channel> <voice_channel> `",
         "examples": [
             " -setup <text_channel> <voice_channel> ",
@@ -448,7 +410,6 @@ COMMAND_INFO = {
         "description": "` get setup channels for the Server `",
         "category": "` Config `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "` -getsetup `",
         "examples": [
             " -getsetup  ",
@@ -458,7 +419,6 @@ COMMAND_INFO = {
         "description": "` clear setup channels for the server`",
         "category": "` Config `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "` -clearsetup  `",
         "examples": [
             " -clearsetup ",
@@ -468,7 +428,6 @@ COMMAND_INFO = {
         "description": "`Check your no prefix access status and voting information`",
         "category": "` Vote `",
         "cooldown": "` 3 second(s) `",
-        "aliases": [ "` prefixstatus `"],
         "usage": "`-noprefixstatus`",
         "examples": [
             " -noprefixstatus",
@@ -479,7 +438,6 @@ COMMAND_INFO = {
         "description": "`Get voting information and no prefix access details`",
         "category": "` Vote `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` vote `"],
         "usage": "`-vote`",
         "examples": [
             " -vote"
@@ -489,7 +447,6 @@ COMMAND_INFO = {
         "description": "`Lock or unlock the music session (DJ only)`",
         "category": "` DJ `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` sess `"],
         "usage": "`-session`",
         "examples": [
             " -session",
@@ -500,7 +457,6 @@ COMMAND_INFO = {
         "description": "`Move a track to a different position in the queue`",
         "category": "` DJ `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` None `"],
         "usage": "`-move <from> <to>`",
         "examples": [
             " -move 3 1",
@@ -511,7 +467,6 @@ COMMAND_INFO = {
         "description": "`Toggle queue loop mode on/off`",
         "category": "` Music `",
         "cooldown": "` 3 second(s) `",
-        "aliases": ["` lq `", "` qloop `"],
         "usage": "`-loopqueue`",
         "examples": [
             " -loopqueue",
@@ -522,7 +477,6 @@ COMMAND_INFO = {
         "description": "`Show lyrics for the current song or a search query`",
         "category": "` Music `",
         "cooldown": "` 5 second(s) `",
-        "aliases": ["` None `"],
         "usage": "`-lyrics [query]`",
         "examples": [
             " -lyrics",
@@ -755,7 +709,7 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="help", description="Displays the help menu with available categories and commands.")
+    @commands.hybrid_command(name="help", description="Displays the help menu with available categories and commands.", aliases=["h", "cmds"])
     @commands.cooldown(1, 3, BucketType.user)
     @maintenance_check()
     @is_not_blacklisted()
@@ -765,19 +719,31 @@ class Help(commands.Cog):
             prefix = await get_prefix(guild_id, ctx.bot.user.id)
             
             if command_name:
-                command_info = COMMAND_INFO.get(command_name)
+                command = ctx.bot.get_command(command_name.strip().lower())
+                command_info = COMMAND_INFO.get(command.qualified_name) if command else None
                 if command_info:
+                    aliases = ", ".join(f"` {a} `" for a in command.aliases) or "` None `"
                     examples = "\n".join([example.replace('-', prefix, 1) for example in command_info['examples']])
                     embed = discord.Embed(
-                        title=f"Help: {command_name}",
+                        title=f"Help: {command.qualified_name}",
                         color=EMBED_COLOR,
                     )
                     embed.add_field(name="Description", value=command_info['description'], inline=False)
                     embed.add_field(name="Category",    value=command_info['category'],    inline=True)
                     embed.add_field(name="Cooldown",    value=command_info['cooldown'],    inline=True)
-                    embed.add_field(name="Aliases",     value=', '.join(command_info['aliases']), inline=False)
+                    embed.add_field(name="Aliases",     value=aliases, inline=False)
                     embed.add_field(name="Usage",       value=command_info['usage'].replace('-', prefix, 1), inline=False)
                     embed.add_field(name="Examples",    value=f"```{examples}```",         inline=False)
+                    schedule_delete(await ctx.send(embed=embed))
+                elif command and command.name not in EXCLUDED_COMMANDS:
+                    aliases = ", ".join(f"` {a} `" for a in command.aliases) or "` None `"
+                    embed = discord.Embed(
+                        title=f"Help: {command.qualified_name}",
+                        color=EMBED_COLOR,
+                    )
+                    embed.add_field(name="Description", value=f"`{command.description or 'No description available.'}`", inline=False)
+                    embed.add_field(name="Aliases",     value=aliases, inline=False)
+                    embed.add_field(name="Usage",       value=f"`{prefix}{command.qualified_name} {command.signature}`".replace(" `", "`"), inline=False)
                     schedule_delete(await ctx.send(embed=embed))
                 else:
                     embed = discord.Embed(

@@ -34,7 +34,7 @@ class TempSetup(commands.Cog):
         except Exception:
             pass
 
-    @commands.hybrid_command(name="temp-setup", description="Restrict bot to a text channel and category. Mutually exclusive with /setup.")
+    @commands.hybrid_command(name="temp-setup", description="Restrict bot to a text channel and category. Mutually exclusive with /setup.", aliases=["tempsetup", "ts"])
     @commands.cooldown(1, 5, BucketType.user)
     @admin_or_owner()
     @is_not_blacklisted()
@@ -51,7 +51,7 @@ class TempSetup(commands.Cog):
         else:
             await ctx.send("Failed to save temp setup.", ephemeral=True)
 
-    @commands.hybrid_command(name="clear-tempsetup", description="Clear the temp setup for this server.")
+    @commands.hybrid_command(name="clear-tempsetup", description="Clear the temp setup for this server.", aliases=["cleartempsetup", "cts"])
     @commands.cooldown(1, 5, BucketType.user)
     @admin_or_owner()
     @is_not_blacklisted()
@@ -63,7 +63,7 @@ class TempSetup(commands.Cog):
         await unified_cache.delete_bot_assignments(ctx.guild.id, bot_id)
         schedule_delete(await ctx.send(view=ts_design.setup_cleared()))
 
-    @commands.hybrid_command(name="get-tempsetup", description="Show the current temp setup for this server.")
+    @commands.hybrid_command(name="get-tempsetup", description="Show the current temp setup for this server.", aliases=["gettempsetup", "gts"])
     @commands.cooldown(1, 5, BucketType.user)
     @admin_or_owner()
     @is_not_blacklisted()

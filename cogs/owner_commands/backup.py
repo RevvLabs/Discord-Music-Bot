@@ -161,7 +161,7 @@ class BackupCog(commands.Cog):
         except Exception as e:
             print(f"❌ Failed to send backup to channel: {e}")
 
-    @commands.hybrid_command(name="backup", description="Backup .env, emojis.py, and PostgreSQL database and send to your DMs.")
+    @commands.hybrid_command(name="backup", description="Backup .env, emojis.py, and PostgreSQL database and send to your DMs.", aliases=["bk", "bkp"])
     async def backup(self, ctx: commands.Context):
         if ctx.author.id not in BOT_OWNER_IDS:
             v = owner_design.permission_denied()

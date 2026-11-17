@@ -320,7 +320,7 @@ class Profile(commands.Cog):
             source_rows, guild_name,
         )
 
-    @commands.hybrid_command(name="profile", description="View your music profile card.")
+    @commands.hybrid_command(name="profile", description="View your music profile card.", aliases=["pf", "prof"])
     @commands.cooldown(1, 5, BucketType.user)
     @is_not_blacklisted()
     @maintenance_check()

@@ -14,7 +14,7 @@ class Visualiser(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="visualiser", description="Visualize all available owner commands and their status.")
+    @commands.hybrid_command(name="visualiser", description="Visualize all available owner commands and their status.", aliases=["vis", "visualizer"])
     async def visualiser(self, ctx: commands.Context):
         if not is_bot_owner(ctx.author.id):
             await ctx.send(view=owner_design.permission_denied(), ephemeral=True)
