@@ -8,6 +8,7 @@ from utils.helper_function.VoltricxPlayer import LavaMusic
 from utils.helper_function.leaderboard_counter import increment_user_count, increment_user_source
 from utils.helper_function.autoplay_cache import autoplay_cache
 from utils.helper_function.unified_cache_manager import unified_cache
+from utils.helper_function.music_session import end_session, is_247_enabled
 from utils.embed_designs import session as session_design
 from utils.embed_designs import voltricx_events as vx_design
 from .player import PlayerCard
@@ -16,7 +17,6 @@ from .player import PlayerCard
 class Voltricx_Event(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.player_messages = {}
 
 
     # Platform icons via Google favicon service — stable URLs that never expire,
@@ -79,16 +79,18 @@ class Voltricx_Event(commands.Cog):
             except Exception:
                 pass
         
-        if player in self.player_messages:
-            previous_message_id = self.player_messages[player]
+        # A track is playing → a music session is running until end_session().
+        player.session_active = True
+
+        previous_card = getattr(player, "msg", None)
+        if previous_card is not None:
+            player.msg = None
             try:
-                previous_message = await player.home.fetch_message(previous_message_id)
-                
-                await previous_message.delete()
+                await previous_card.delete()
             except discord.NotFound:
                 pass
             except discord.Forbidden:
-                print(f"Permission error: Bot can't delete the previous message in {player.home.name}")
+                print(f"Permission error: Bot can't delete the previous message in {previous_card.channel}")
             except Exception as e:
                 await self.handle_voltricx_exception(e, "Track Start - Message Deletion")
 
@@ -117,8 +119,6 @@ class Voltricx_Event(commands.Cog):
         try:
             embed_helper = PlayerCard(self.bot)
             await embed_helper.send_track_embed(player, track, formatted_duration, requestor, platform, icon_url)
-            if hasattr(player, 'msg') and player.msg:
-                self.player_messages[player] = player.msg.id
         except Exception as e:
             await self.handle_voltricx_exception(e, "Track Start - Embed Sending")
             try:
@@ -137,7 +137,7 @@ class Voltricx_Event(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voltricx_track_end(self, player: LavaMusic, track: voltricx.Playable, reason: str):
-        if player is None or player.queue is None or player.home is None:
+        if player is None or player.queue is None:
             return
 
         # Normalise reason to a plain uppercase string regardless of whether
@@ -149,16 +149,21 @@ class Voltricx_Event(commands.Cog):
         # Give voltricx a moment to queue the next track (autoplay / loop).
         await asyncio.sleep(0.5)
 
+        # Player was torn down meanwhile (stop / disconnect / alone) — that path
+        # already ended the session.
+        if not player._connected:
+            return
+
         # ── Autoplay smart-queue top-up ───────────────────────────────────────
-        # Use has_session() as the sole gate — stop_callback() already calls
-        # stop_session() before player.stop(), so when reason is STOPPED the
-        # session is gone and this block is skipped automatically.
+        # Use has_session() as the sole gate — stop paths call end_session()
+        # (which stops the autoplay session) before player.stop(), so when reason
+        # is STOPPED the session is gone and this block is skipped automatically.
         guild_id = player.guild.id
         topup_scheduled = False
         if autoplay_cache.has_session(guild_id):
             session = autoplay_cache.get_session(guild_id)
             queue_size = len(player.queue)
-            from cogs.commands.autoplay import _AUTOPLAY_TARGET, _resolve_track
+            from cogs.commands.autoplay import _AUTOPLAY_TARGET
             needed = _AUTOPLAY_TARGET - queue_size
             if needed > 0:
                 batch = autoplay_cache.advance_session(guild_id, needed)
@@ -172,7 +177,7 @@ class Voltricx_Event(commands.Cog):
         # Each pending song carries its own requestor/engine, so this batch may
         # be a merge of multiple users' "Play All" calls — that's expected.
         from cogs.commands.playlist import (
-            has_playlist_session, stop_playlist_session, advance_playlist_session, _PLAYLIST_TARGET,
+            has_playlist_session, advance_playlist_session, _PLAYLIST_TARGET,
         )
         if not topup_scheduled and has_playlist_session(guild_id):
             needed = _PLAYLIST_TARGET - len(player.queue)
@@ -195,42 +200,17 @@ class Voltricx_Event(commands.Cog):
 
         if player.current is None and player.queue.is_empty:
             # A topup was just scheduled — it will restart playback once tracks resolve.
-            # Don't declare session over yet; _topup_queue handles cleanup if all resolves fail.
+            # Don't declare session over yet; the topup task ends it if all resolves fail.
             if topup_scheduled:
                 return
+            # Nothing left to play. The bot stays in the VC; voltricx's idle timer
+            # (inactive_timeout) fires on_voltricx_inactive_player to leave later.
+            await end_session(player, reason="finished")
 
-            # Clear any active autoplay / playlist session — nothing left to play
-            autoplay_cache.stop_session(player.guild.id)
-            stop_playlist_session(player.guild.id)
-
-            # Always reset channel status
-            try:
-                voice_channel = player.channel
-                await voice_channel.edit(status="Ready To Play !")
-            except discord.DiscordException:
-                pass
-
-            # Only clean up if inactive_player hasn't already done it (pop acts as a once-flag)
-            previous_message_id = self.player_messages.pop(player, None)
-            if previous_message_id is not None:
-                try:
-                    previous_message = await player.home.fetch_message(previous_message_id)
-                    await previous_message.delete()
-                except discord.NotFound:
-                    pass
-                except discord.Forbidden:
-                    print(f"Permission error: Bot can't delete the previous message in {player.home.name}")
-                except Exception as e:
-                    print(f"An error occurred while deleting the previous message: {e}")
-            try:
-                await player.home.send(view=session_design.session_over())
-            except Exception:
-                pass
-
-    async def is_247_enabled(self, guild_id):
-        bot_id = self.bot.user.id if self.bot.user else 0
-        data = await unified_cache.get_channel_set_data(guild_id, bot_id)
-        return data is not None
+    async def _end_if_still_idle(self, player: LavaMusic) -> None:
+        """After a top-up batch: if every resolve failed, nothing will play — end the session."""
+        if player._connected and not player.playing and player.current is None and player.queue.is_empty:
+            await end_session(player, reason="finished")
 
     async def _topup_queue(self, player: LavaMusic, batch: list, requestor) -> None:
         """Resolve and add a batch of cached tracks to the player queue (background task)."""
@@ -248,33 +228,13 @@ class Voltricx_Event(commands.Cog):
                 await asyncio.sleep(0.3)
             except Exception:
                 continue
-
-        # After entire batch: if player is still idle and queue is still empty,
-        # all resolves failed — trigger session-over cleanup manually
-        if not player.playing and player.current is None and player.queue.is_empty:
-            autoplay_cache.stop_session(player.guild.id)
-            try:
-                await player.channel.edit(status="Ready To Play !")
-            except discord.DiscordException:
-                pass
-            previous_message_id = self.player_messages.pop(player, None)
-            if previous_message_id is not None and getattr(player, "home", None):
-                try:
-                    msg = await player.home.fetch_message(previous_message_id)
-                    await msg.delete()
-                except Exception:
-                    pass
-            if getattr(player, "home", None):
-                try:
-                    await player.home.send(view=session_design.session_over())
-                except Exception:
-                    pass
+        await self._end_if_still_idle(player)
 
     async def _topup_playlist_queue(self, player: LavaMusic, batch: list) -> None:
         """Resolve and add a batch of playlist songs to the queue one-by-one (background task).
         Each entry is (title, author, requestor, engine) — songs may come from different
         users' merged "Play All" sessions."""
-        from cogs.commands.playlist import _resolve_one, stop_playlist_session
+        from cogs.commands.playlist import _resolve_one
         for title, author, requestor, engine in batch:
             try:
                 q = f"{title} {author}".strip() if author else title.strip()
@@ -294,41 +254,30 @@ class Voltricx_Event(commands.Cog):
                 await asyncio.sleep(0.3)
             except Exception:
                 continue
+        await self._end_if_still_idle(player)
 
-        # After the batch: if player is still idle and queue is still empty,
-        # all resolves failed — trigger session-over cleanup manually
-        if not player.playing and player.current is None and player.queue.is_empty:
-            stop_playlist_session(player.guild.id)
-            try:
-                await player.channel.edit(status="Ready To Play !")
-            except discord.DiscordException:
-                pass
-            previous_message_id = self.player_messages.pop(player, None)
-            if previous_message_id is not None and getattr(player, "home", None):
-                try:
-                    msg = await player.home.fetch_message(previous_message_id)
-                    await msg.delete()
-                except Exception:
-                    pass
-            if getattr(player, "home", None):
-                try:
-                    await player.home.send(view=session_design.session_over())
-                except Exception:
-                    pass
-                
-                
+    @commands.Cog.listener()
+    async def on_mewzik_player_destroyed(self, player: LavaMusic) -> None:
+        """Player torn down (kicked, /disconnect, failed reconnect, ...). Lavalink's
+        TrackEnd can't reach a destroyed player, so end the session here.
+        No-op when the stopping path already ended it."""
+        await end_session(player, reason="disconnected")
+
     @commands.Cog.listener()
     async def on_voltricx_inactive_player(self, player: Player) -> None:
         print(f"\033[93m[INFO] Inactive Player Detected\033[0m: Guild {player.guild.name} ({player.guild.id})")
 
         guild_id = player.guild.id
         player.filters.reset()
-        player.filter_name="None"
-        player.filter_status=False
-        player._autoplay=voltricx.AutoPlayMode.partial
+        player.filter_name = "None"
+        player.filter_status = False
+        player._autoplay = voltricx.AutoPlayMode.partial
 
-        # Clear any active autoplay session for this guild
-        autoplay_cache.stop_session(guild_id)
+        # Normally already ended by on_voltricx_track_end — then this sends nothing.
+        await end_session(player, reason="finished")
+
+        if await is_247_enabled(self.bot, guild_id):
+            return
 
         # Release any temp no-prefix VC ownership held by this bot for this channel.
         try:
@@ -337,60 +286,32 @@ class Voltricx_Event(commands.Cog):
         except Exception:
             pass
 
-        # Always reset channel status
-        try:
-            voice_channel = player.channel
-            await voice_channel.edit(status="Ready To Play !")
-        except discord.DiscordException:
-            pass
-
-        # Delete player card and send session over (pop acts as a once-flag vs on_voltricx_track_end)
-        previous_message_id = self.player_messages.pop(player, None)
-        if previous_message_id is not None and hasattr(player, 'home') and player.home:
+        home = getattr(player, "home", None)
+        if home is not None:
+            timeout = getattr(player, "inactive_timeout", 300)
+            requestor = getattr(player, "last_requestor", None)
+            perms = home.permissions_for(player.guild.me)
+            missing = []
+            if not perms.send_messages:
+                missing.append("Send Messages")
+            if not perms.embed_links:
+                missing.append("Embed Links")
+            if not perms.view_channel:
+                missing.append("View Channel")
             try:
-                previous_message = await player.home.fetch_message(previous_message_id)
-                await previous_message.delete()
-            except (discord.NotFound, discord.Forbidden, Exception):
-                pass
-        if hasattr(player, 'home') and player.home:
-            try:
-                await player.home.send(view=session_design.session_over())
-            except Exception:
+                if missing:
+                    if requestor and hasattr(requestor, "send"):
+                        await requestor.send(f"Missing permission(s) in #{home.name}: {', '.join(missing)}. Please grant the bot these permissions.")
+                else:
+                    await home.send(view=session_design.inactive_player(timeout))
+            except discord.DiscordException:
                 pass
 
-        if await self.is_247_enabled(guild_id):
-            return
-
-        timeout = getattr(player, "inactive_timeout", 300)
-        view = session_design.inactive_player(timeout)
-
-        if not hasattr(player, 'home') or player.home is None:
-            return
-        perms = player.home.permissions_for(player.guild.me)
-        missing = []
-        if not perms.send_messages:
-            missing.append("Send Messages")
-        if not perms.embed_links:
-            missing.append("Embed Links")
-        if not perms.view_channel:
-            missing.append("View Channel")
-        if missing:
-            requestor = getattr(player, 'last_requestor', None)
-            if requestor and hasattr(requestor, 'send'):
-                try:
-                    await requestor.send(f"Missing permission(s) in #{player.home.name}: {', '.join(missing)}. Please grant the bot these permissions.")
-                except Exception:
-                    pass
-            return
+        # Always leave — a missing text-channel permission must not keep the bot in the VC.
         try:
-            await player.home.send(view=view)
-        except discord.Forbidden:
-            requestor = getattr(player, 'last_requestor', None)
-            if requestor and hasattr(requestor, 'send'):
-                await requestor.send(f"Missing permission: Send Messages in #{player.home.name}. Please grant the bot this permission.")
-        player.filters.reset()
-        await player.disconnect()    
-    
+            await player.disconnect()
+        except Exception as e:
+            await self.handle_voltricx_exception(e, "Inactive Player - Disconnect")
     @commands.Cog.listener()
     async def on_voltricx_node_disconnected(self, node: voltricx.Node) -> None:
         print(f"\033[93m[INFO] Node Disconnected\033[0m: {node.identifier}")
@@ -542,8 +463,11 @@ class Voltricx_Event(commands.Cog):
             print(f"\033[91m[ERROR] Node Closed\033[0m: Node {node.identifier} - Disconnected {len(disconnected)} players")
 
             for player in disconnected:
-                # Clean up player_messages so dict doesn't leak on abnormal disconnect
-                self.player_messages.pop(player, None)
+                # Node gone → session is dead; clean up (node_disconnected notice below replaces Session Over).
+                try:
+                    await end_session(player, notify=False)
+                except Exception as e:
+                    await self.handle_voltricx_exception(e, "Node Closed - End Session")
                 try:
                     if hasattr(player, 'home') and player.home:
                         try:

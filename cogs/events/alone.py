@@ -4,6 +4,7 @@ import voltricx
 from utils.helper_function.VoltricxPlayer import LavaMusic
 from utils.helper_function.unified_cache_manager import unified_cache
 from utils.helper_function.autoplay_cache import autoplay_cache
+from utils.helper_function.music_session import end_session, is_247_enabled, reset_player_state
 from utils.embed_designs.voltricx_events import rejoin_failed
 import asyncpg
 import asyncio
@@ -20,6 +21,8 @@ class AutoStop(commands.Cog):
         self._rejoin_attempts: dict[int, int] = {}
         self._rejoin_in_progress: set[int] = set()
         self._max_rejoin_attempts = 3
+        self._alone_handling: set[int] = set()
+        self._alone_grace = 5  # seconds
         self.check_vc_task.start()
         
         # Connection pooling and batch processing
@@ -122,50 +125,68 @@ class AutoStop(commands.Cog):
             if len(self.batch_data) >= self.batch_size:
                 await self._process_batch()
 
+    async def _end_if_alone(self, player: LavaMusic) -> bool:
+        """If no human is left in the bot's VC: end the music session and leave
+        (24/7 /setup guilds stop playback but stay). Returns True when alone."""
+        vc = player.channel
+        if vc is None or not player._connected or player.guild is None:
+            return False
+        if any(not m.bot for m in vc.members):
+            return False
+
+        guild_id = player.guild.id
+        if guild_id in self._alone_handling:
+            return True
+        self._alone_handling.add(guild_id)
+        try:
+            stay_247 = await is_247_enabled(self.bot, guild_id)
+            if stay_247 and not player.session_active and not player.playing:
+                return True  # idle in the 24/7 VC — nothing to end
+
+            reset_player_state(player)
+            await end_session(player, reason="alone")
+
+            if stay_247:
+                if player.playing:
+                    await player.stop()
+                return True
+
+            # Release any temp no-prefix VC ownership we held here.
+            try:
+                await unified_cache.delete_vc_assignment(guild_id, vc.id, self.bot.user.id)
+            except Exception:
+                pass
+            await player.disconnect()
+            return True
+        finally:
+            self._alone_handling.discard(guild_id)
+
+    async def _alone_check_later(self, player: LavaMusic):
+        # Grace period so a quick reconnect/channel hop doesn't kill the session.
+        await asyncio.sleep(self._alone_grace)
+        try:
+            await self._end_if_alone(player)
+        except Exception as e:
+            print(f"\033[91m[ERROR] Alone check failed\033[0m: {e}")
+
     @tasks.loop(seconds=30)
     async def check_vc_task(self):
-        if not voltricx.Pool.nodes():
-            return  
-
+        # Fallback sweep (on_voice_state_update reacts to leaves immediately).
+        # Every player is isolated in try/except: an unhandled exception would
+        # stop this tasks.loop for good and sessions would never end again.
         for node in voltricx.Pool.nodes().values():
             for player in node.players.values():
-                if isinstance(player, LavaMusic):  
-                    if player._connected:
-                        vc = player.channel
-                        # Count only human members
-                        human_members = [m for m in vc.members if not m.bot]
-                        if len(human_members) == 0: 
-                            if isinstance(player.queue, voltricx.Queue):
-                                player.queue.mode = voltricx.QueueMode.normal
-                            player.filters.reset() 
-                            player.filter_name = "None"
-                            player.filter_status = False
-                            player.queue.clear()
-                            player._autoplay = voltricx.AutoPlayMode.partial
-                            autoplay_cache.stop_session(player.guild.id)
-                            from cogs.commands.playlist import stop_playlist_session
-                            stop_playlist_session(player.guild.id)
-                            # Release any temp no-prefix VC ownership we held here.
-                            try:
-                                await unified_cache.delete_vc_assignment(
-                                    player.guild.id, vc.id, self.bot.user.id
-                                )
-                            except Exception:
-                                pass
-                            if player.playing:
-                                try:
-                                    await player.stop() 
-                                except voltricx.LavalinkException as e:
-                                    print(f"Error stopping player: {e}")
-                                    continue
-                        
-                        elif player.playing:
-                            for member in vc.members:
-                                if member.bot:
-                                    continue
-                                user_id = member.id
-                                guild_id = member.guild.id
-                                await self.update_user_time(guild_id, user_id, 0.5)
+                if not isinstance(player, LavaMusic) or not player._connected:
+                    continue
+                try:
+                    if await self._end_if_alone(player):
+                        continue
+                    if player.playing and player.channel is not None:
+                        for member in player.channel.members:
+                            if not member.bot:
+                                await self.update_user_time(member.guild.id, member.id, 0.5)
+                except Exception as e:
+                    print(f"\033[91m[ERROR] VC check failed\033[0m: guild {getattr(player.guild, 'id', '?')} — {e}")
 
 
     @check_vc_task.before_loop
@@ -175,6 +196,12 @@ class AutoStop(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
         if member.id != self.bot.user.id:
+            # A human left (or moved out of) the bot's VC → end the session if nobody is left.
+            if member.bot or before.channel is None or before.channel == after.channel:
+                return
+            player = member.guild.voice_client
+            if isinstance(player, LavaMusic) and player.channel and player.channel.id == before.channel.id:
+                asyncio.create_task(self._alone_check_later(player))
             return
         # Bot connected to a channel — reset rejoin failure counter only if not mid-rejoin
         # (a connect event fires during the rejoin attempt itself; resetting there causes infinite loop)

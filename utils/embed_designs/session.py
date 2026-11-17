@@ -2,12 +2,20 @@ import discord
 from utils.helper_function.bot_config import EMBED_COLOR
 
 
-def session_over() -> discord.ui.LayoutView:
+_SESSION_OVER_REASONS = {
+    "finished": "That's a wrap! All songs have been played.",
+    "alone": "Everyone left the voice channel, so playback was stopped.",
+    "disconnected": "I was disconnected from the voice channel.",
+}
+
+
+def session_over(reason: str = "finished") -> discord.ui.LayoutView:
+    text = _SESSION_OVER_REASONS.get(reason, _SESSION_OVER_REASONS["finished"])
     container = discord.ui.Container(
         discord.ui.TextDisplay(content="## 🎶 Music Session Over"),
         discord.ui.Separator(visible=True, spacing=discord.SeparatorSpacing.small),
         discord.ui.TextDisplay(
-            content="That's a wrap! All songs have been played.\n"
+            content=f"{text}\n"
                     "Use `/play` to queue up more tracks and keep the party going! 🎉"
         ),
         accent_color=EMBED_COLOR,

@@ -4,6 +4,7 @@ import voltricx
 from utils.check_decorators.blacklist_checker import is_not_blacklisted
 from utils.check_decorators.maintenance import maintenance_check
 from utils.helper_function.VoltricxPlayer import LavaMusic
+from utils.helper_function.music_session import end_session, reset_player_state
 from discord.ext.commands import BucketType
 from utils.helper_function.voice_connected import ensure_voice
 from utils.helper_function.setup_enforcer import enforce_setup
@@ -36,16 +37,10 @@ class Stop(commands.Cog):
         track_uri   = track.uri                            if track else None
         artwork_url = getattr(track, "artwork", None)      if track else None
 
-        # Full reset — clear queue, stop autoplay, restore volume, reset filters
-        from utils.helper_function.autoplay_cache import autoplay_cache
-        from cogs.commands.playlist import stop_playlist_session
-        autoplay_cache.stop_session(ctx.guild.id)
-        stop_playlist_session(ctx.guild.id)
-        player.queue.clear()
-        player._autoplay     = voltricx.AutoPlayMode.partial   # autoplay has no setter
-        player.filter_name   = "None"
-        player.filter_status = False
-        player.filters.reset()
+        # Full reset — clear queue, end autoplay/playlist session, restore volume,
+        # reset filters. The stop card below replaces the "Session Over" notice.
+        reset_player_state(player)
+        await end_session(player, notify=False)
         await player.set_volume(DEFAULT_VOLUME)
         await player.set_filters(player.filters)
         await player.stop()

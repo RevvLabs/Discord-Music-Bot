@@ -18,6 +18,7 @@ from utils.embed_designs import error_handler as err_design
 from utils.check_decorators.dj_checker import dj_check_member
 from utils.helper_function.session_manager import session_manager
 from utils.embed_designs import session as session_design
+from utils.embed_designs import shuffle as shuffle_design
 
 load_dotenv()
 
@@ -282,6 +283,11 @@ class SettingsView(discord.ui.LayoutView):
             return
         self.player.queue.shuffle()
         await self._refresh_panel(interaction)
+        # The panel itself looks identical after a shuffle — confirm it explicitly.
+        await interaction.followup.send(
+            view=shuffle_design.shuffled(shuffle_design.up_next_titles(self.player.queue)),
+            ephemeral=True,
+        )
 
     # ── volume callbacks ──────────────────────────────────────────────────────
 
@@ -471,15 +477,10 @@ class PlayerView(discord.ui.LayoutView):
         await interaction.response.defer()
 
     async def stop_callback(self, interaction: discord.Interaction):
-        from utils.helper_function.autoplay_cache import autoplay_cache
-        from cogs.commands.playlist import stop_playlist_session
-        autoplay_cache.stop_session(self.player.guild.id)
-        stop_playlist_session(self.player.guild.id)
-        self.player.filter_name = "None"
-        self.player.filter_status = False
-        self.player.filters.reset()
-        self.player.queue.clear()
-        self.player._autoplay = voltricx.AutoPlayMode.partial
+        from utils.helper_function.music_session import end_session, reset_player_state
+        reset_player_state(self.player)
+        # The "player stopped" notice below replaces the "Session Over" one.
+        await end_session(self.player, notify=False)
         await self.player.stop()
         await interaction.response.send_message(view=pc_design.player_stopped(interaction.user.mention))
         await self.player.disconnect()

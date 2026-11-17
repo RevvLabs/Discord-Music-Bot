@@ -33,7 +33,7 @@ class Shuffle(commands.Cog):
                 return
 
             player.queue.shuffle()
-            await ctx.send(view=shuffle_design.shuffled(), ephemeral=True)
+            await ctx.send(view=shuffle_design.shuffled(shuffle_design.up_next_titles(player.queue)), ephemeral=True)
         except Exception as e:
             await ctx.send(view=shuffle_design.error(str(e)), ephemeral=True)
 

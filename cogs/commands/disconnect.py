@@ -28,10 +28,9 @@ class disconnect(commands.Cog):
 
         schedule_delete(await ctx.send(view=disconnect_design.disconnected()))
 
-        from utils.helper_function.autoplay_cache import autoplay_cache
-        from cogs.commands.playlist import stop_playlist_session
-        autoplay_cache.stop_session(ctx.guild.id)
-        stop_playlist_session(ctx.guild.id)
+        # The "disconnected" notice above replaces the "Session Over" one.
+        from utils.helper_function.music_session import end_session
+        await end_session(ctx.voice_client, notify=False)
 
         try:
             await ctx.voice_client.disconnect(force=True)

@@ -18,6 +18,10 @@ class LavaMusic(Player):
         self.filter_status = False
         self.filter_name = None
         self._volume = 60
+        # Music-session lifecycle (see utils/helper_function/music_session.py).
+        self.session_active = False
+        self.msg = None  # current now-playing card message
+        self._destroy_dispatched = False
 
         if bot_logger.enabled:
             guild_id = getattr(self.guild, "id", "unknown") if self.guild else "unknown"
@@ -31,6 +35,17 @@ class LavaMusic(Player):
                 volume=self.volume,
                 source=self.source,
             )
+
+    def cleanup(self) -> None:
+        # voltricx calls cleanup() at the end of every player teardown: /stop,
+        # /disconnect, being kicked/moved out, failed voice reconnect. Once the
+        # player is gone Lavalink's TrackEnd can no longer reach on_voltricx_track_end,
+        # so this event is the only reliable "player is gone" signal. Teardown can
+        # run twice (disconnect() + the resulting voice-state update) — dispatch once.
+        super().cleanup()
+        if not self._destroy_dispatched:
+            self._destroy_dispatched = True
+            self.client.dispatch("mewzik_player_destroyed", self)
 
     def check_queue_size(self) -> bool:
         current = len(self.queue)
